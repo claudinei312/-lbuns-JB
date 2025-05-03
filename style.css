@@ -22,11 +22,15 @@ main {
     padding: 20px;
 }
 
-input[type="text"] {
+.search-section, .login-section, .admin-form {
+    margin-bottom: 20px;
+}
+
+input[type="text"], input[type="password"] {
     padding: 10px;
     margin-bottom: 10px;
     width: 100%;
-    max-width: 400px;
+    max-width: 300px;
 }
 
 button {
@@ -49,7 +53,5 @@ footer {
 }
 
 .album {
-    margin-top: 20px;
-    border: 1px solid #ccc;
-    padding: 15px;
-    background-color: #fff;
+    margin-bottom: 20px;
+}
