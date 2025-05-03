@@ -1,73 +1,80 @@
-const supabaseUrl = "https://cdstzbtewwbwjqhvhigy.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78";
-const supabase = supabasejs.createClient(supabaseUrl, supabaseKey);
+// Simulação de armazenamento de dados em um array
+let clients = [];
 
-// Função para login
-function loginUser() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-
-    // E-mail e senha de exemplo (se quiser alterar, basta modificar aqui)
-    const validEmail = "admin@jbformaturas.com";
-    const validPassword = "admin123";
-
-    // Verifica se o email e a senha estão corretos
-    if (email === validEmail && password === validPassword) {
-        window.location.href = "painel.html"; // Redireciona para o painel de administração
-    } else {
-        alert("E-mail ou senha inválidos.");
-    }
-
-    return false; // Evita o envio do formulário
-}
-
-}
-
-}
-
-async function addClient() {
+// Função para adicionar um novo cliente (formando)
+function addClient() {
     const name = document.getElementById("clientName").value;
     const cpf = document.getElementById("clientCPF").value;
-    const photo = document.getElementById("photoFile").files[0];
-    const filePath = `fotos/${cpf}_${photo.name}`;
-    const { error: uploadError } = await supabase.storage.from("jb-formatura").upload(filePath, photo);
-    if (uploadError) {
-        alert("Erro ao enviar foto.");
+    const photos = document.getElementById("albumPhotos").files;
+
+    // Verificando se os campos estão preenchidos corretamente
+    if (!name || !cpf || photos.length === 0) {
+        alert("Por favor, preencha todos os campos corretamente!");
         return false;
     }
 
-    const { error: insertError } = await supabase.from("alunos").insert({ name, cpf, photo: filePath });
-    if (insertError) {
-        alert("Erro ao salvar os dados.");
-        return false;
-    }
+    // Adicionando o cliente no array de clientes
+    const client = {
+        name: name,
+        cpf: cpf,
+        photos: Array.from(photos).map(photo => URL.createObjectURL(photo))
+    };
 
-    alert("Cadastro realizado com sucesso!");
-    return false;
+    // Armazenando o cliente na lista
+    clients.push(client);
+
+    alert(`Cliente ${name} cadastrado com sucesso!`);
+
+    // Limpar os campos após o cadastro
+    document.getElementById("clientName").value = "";
+    document.getElementById("clientCPF").value = "";
+    document.getElementById("albumPhotos").value = "";
+
+    // Atualizar a lista de pedidos de álbuns
+    updateOrderList();
+
+    return false; // Impedir o envio do formulário e recarregamento da página
 }
 
-async function searchAlbum() {
-    const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const { data, error } = await supabase.from("alunos").select("*");
-    if (error) {
-        alert("Erro ao buscar dados.");
-        return;
-    }
+// Função para atualizar a lista de pedidos de álbuns
+function updateOrderList() {
+    const orderList = document.getElementById("orderList");
+    orderList.innerHTML = ""; // Limpar lista atual
 
-    const results = data.filter(album =>
-        album.name.toLowerCase().includes(searchValue) || album.cpf.includes(searchValue)
-    );
-    const albumsSection = document.getElementById("albums");
-    albumsSection.innerHTML = "";
-
-    for (const album of results) {
-        const { data: photoData } = supabase.storage.from("jb-formatura").getPublicUrl(album.photo);
-        const div = document.createElement("div");
-        div.innerHTML = `
-            <h3>${album.name}</h3>
-            <p>CPF: ${album.cpf}</p>
-            <img src="${photoData.publicUrl}" width="200" />
+    clients.forEach(client => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `
+            <strong>${client.name}</strong> (CPF: ${client.cpf})
+            <br>
+            <img src="${client.photos[0]}" alt="${client.name}" width="100" />
         `;
-        albumsSection.appendChild(div);
-    }
+        orderList.appendChild(listItem);
+    });
+}
+
+// Função de busca por nome ou CPF na página inicial
+function searchAlbum() {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const results = clients.filter(client => 
+        client.name.toLowerCase().includes(searchValue) || client.cpf.includes(searchValue)
+    );
+
+    const albumsSection = document.getElementById("albums");
+    albumsSection.innerHTML = ''; // Limpar resultados anteriores
+
+    results.forEach(client => {
+        const albumDiv = document.createElement("div");
+        albumDiv.classList.add("album");
+        albumDiv.innerHTML = `
+            <h3>${client.name}</h3>
+            <p>CPF: ${client.cpf}</p>
+            <img src="${client.photos[0]}" alt="${client.name}" width="100" />
+        `;
+        albumsSection.appendChild(albumDiv);
+    });
+}
+
+// Função para visualização do álbum (exemplo simples)
+function viewAlbum(cpf) {
+    alert("Mostrando álbum para CPF: " + cpf);
 }
