@@ -5,9 +5,10 @@ function loginUser() {
 
     // Validação do login
     if (username === "admin" && password === "admin123") {
-        // Redireciona para a área de administração após login bem-sucedido
-        window.location.href = "admin.html";
-        return false; // impede o envio do formulário
+        // Armazenando a sessão de login
+        localStorage.setItem("loggedIn", "true");
+        window.location.href = "admin.html"; // Redireciona para a área de administração após login bem-sucedido
+        return false;
     } else {
         alert("Credenciais inválidas");
         return false; // impede o envio do formulário
@@ -23,23 +24,32 @@ function addClient() {
     // Aqui você salvaria os dados no servidor ou banco de dados
     alert(`Cliente ${name} cadastrado com sucesso!`);
 
-    return false;
+    // Simulação de salvamento: aqui você pode implementar o código para salvar no banco de dados
+    const albumData = {
+        name: name,
+        cpf: cpf,
+        photos: Array.from(photos).map(photo => URL.createObjectURL(photo)),
+    };
+
+    // Armazenando no localStorage (para testes), pode ser substituído por uma API real
+    let storedAlbums = JSON.parse(localStorage.getItem("albums")) || [];
+    storedAlbums.push(albumData);
+    localStorage.setItem("albums", JSON.stringify(storedAlbums));
+
+    return false; // impede o envio do formulário
 }
 
 // Função de Busca de Álbuns
 function searchAlbum() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const albums = [
-        { name: "João Silva", cpf: "12345678901", photos: ["photo1.jpg", "photo2.jpg"] },
-        { name: "Maria Oliveira", cpf: "98765432100", photos: ["photo3.jpg", "photo4.jpg"] }
-    ];
+    const albums = JSON.parse(localStorage.getItem("albums")) || [];
 
-    const results = albums.filter(album => 
+    const results = albums.filter(album =>
         album.name.toLowerCase().includes(searchValue) || album.cpf.includes(searchValue)
     );
 
     const albumsSection = document.getElementById("albums");
-    albumsSection.innerHTML = '';
+    albumsSection.innerHTML = ''; // Limpa a seção antes de mostrar os resultados
 
     results.forEach(album => {
         const albumDiv = document.createElement("div");
@@ -56,4 +66,11 @@ function searchAlbum() {
 // Função para exibir o álbum
 function viewAlbum(cpf) {
     alert(`Exibindo álbum do CPF: ${cpf}`);
+}
+
+// Simulação de verificação de login em admin.html
+if (window.location.href.includes("admin.html")) {
+    if (localStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "login.html"; // Se não estiver logado, redireciona para a página de login
+    }
 }
