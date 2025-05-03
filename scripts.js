@@ -34,6 +34,9 @@ function loginUser() {
     }
 }
 
+    }
+}
+
 function addClient() {
     const name = document.getElementById("clientName").value;
     const cpf = document.getElementById("clientCPF").value;
