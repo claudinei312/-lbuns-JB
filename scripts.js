@@ -1,125 +1,59 @@
-// === SUPABASE CONFIG ===
-const supabaseUrl = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-// === CADASTRAR CLIENTE ===
-async function addClient() {
-  const name = document.getElementById("clientName").value;
-  const cpf = document.getElementById("clientCPF").value;
-  const fileInput = document.getElementById("albumPhotos");
-  const file = fileInput.files[0];
-
-  if (!file) {
-    alert("Selecione uma foto.");
-    return false;
-  }
-
-  const fileName = `${cpf}_${Date.now()}.${file.name.split('.').pop()}`;
-  const { data: uploadData, error: uploadError } = await supabase.storage
-    .from("fotos")
-    .upload(fileName, file);
-
-  if (uploadError) {
-    alert("Erro ao fazer upload da imagem.");
-    console.error(uploadError);
-    return false;
-  }
-
-  const photoUrl = `${supabaseUrl}/storage/v1/object/public/fotos/${fileName}`;
-
-  const { error: insertError } = await supabase
-    .from("formandos")
-    .insert([{ name, cpf, photo_url: photoUrl }]);
-
-  if (insertError) {
-    alert("Erro ao salvar dados.");
-    console.error(insertError);
-    return false;
-  }
-
-  alert("Cliente cadastrado com sucesso!");
-  document.querySelector("form").reset();
-  loadClients();
-  return false;
-}
-
-// === LISTAR CLIENTES NO PAINEL ===
-async function loadClients() {
-  const list = document.getElementById("orderList");
-  if (!list) return;
-
-  const { data, error } = await supabase
-    .from("formandos")
-    .select("*")
-    .order("name", { ascending: true });
-
-  if (error) {
-    console.error("Erro ao carregar dados:", error);
-    return;
-  }
-
-  list.innerHTML = "";
-  data.forEach(client => {
-    const item = document.createElement("li");
-    item.innerHTML = `
-      <strong>${client.name}</strong> - CPF: ${client.cpf}<br>
-      <img src="${client.photo_url}" alt="${client.name}" width="100" />
-    `;
-    list.appendChild(item);
-  });
-}
-
-// === BUSCAR CLIENTE NA PÁGINA INICIAL ===
-async function searchAlbum() {
-  const searchValue = document.getElementById("searchInput").value.toLowerCase();
-  const { data, error } = await supabase
-    .from("formandos")
-    .select("*");
-
-  if (error) {
-    console.error("Erro na busca:", error);
-    return;
-  }
-
-  const results = data.filter(client =>
-    client.name.toLowerCase().includes(searchValue) ||
-    client.cpf.includes(searchValue)
-  );
-
-  const albumsSection = document.getElementById("albums");
-  albumsSection.innerHTML = "";
-
-  if (results.length === 0) {
-    albumsSection.innerHTML = "<p>Nenhum álbum encontrado.</p>";
-    return;
-  }
-
-  results.forEach(client => {
-    const albumDiv = document.createElement("div");
-    albumDiv.classList.add("album");
-    albumDiv.innerHTML = `
-      <h3>${client.name}</h3>
-      <img src="${client.photo_url}" alt="${client.name}" width="100" />
-    `;
-    albumsSection.appendChild(albumDiv);
-  });
-}
-
-// === LOGIN SIMPLES ===
+// Função de Login (Simples)
 function loginUser() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
-  if (username === "admin" && password === "admin123") {
-    window.location.href = "admin.html";
-  } else {
-    alert("Credenciais inválidas.");
-  }
-  return false;
+    // Validação do login
+    if (username === "admin" && password === "admin123") {
+        // Redireciona para a área de administração após login bem-sucedido
+        window.location.href = "admin.html";
+        return false; // impede o envio do formulário
+    } else {
+        alert("Credenciais inválidas");
+        return false; // impede o envio do formulário
+    }
 }
 
-// === INICIALIZA LISTA DE CLIENTES SE ESTIVER NO ADMIN ===
-document.addEventListener("DOMContentLoaded", () => {
-  loadClients();
-});
+// Função de Adicionar Cliente (Simples)
+function addClient() {
+    const name = document.getElementById("clientName").value;
+    const cpf = document.getElementById("clientCPF").value;
+    const photos = document.getElementById("albumPhotos").files;
+
+    // Aqui você salvaria os dados no servidor ou banco de dados
+    alert(`Cliente ${name} cadastrado com sucesso!`);
+
+    return false;
+}
+
+// Função de Busca de Álbuns
+function searchAlbum() {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const albums = [
+        { name: "João Silva", cpf: "12345678901", photos: ["photo1.jpg", "photo2.jpg"] },
+        { name: "Maria Oliveira", cpf: "98765432100", photos: ["photo3.jpg", "photo4.jpg"] }
+    ];
+
+    const results = albums.filter(album => 
+        album.name.toLowerCase().includes(searchValue) || album.cpf.includes(searchValue)
+    );
+
+    const albumsSection = document.getElementById("albums");
+    albumsSection.innerHTML = '';
+
+    results.forEach(album => {
+        const albumDiv = document.createElement("div");
+        albumDiv.classList.add("album");
+        albumDiv.innerHTML = `
+            <h3>${album.name}</h3>
+            <img src="${album.photos[0]}" alt="${album.name}" width="100" />
+            <button onclick="viewAlbum('${album.cpf}')">Ver Álbum</button>
+        `;
+        albumsSection.appendChild(albumDiv);
+    });
+}
+
+// Função para exibir o álbum
+function viewAlbum(cpf) {
+    alert(`Exibindo álbum do CPF: ${cpf}`);
+}
