@@ -1,48 +1,58 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel de Administração</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Painel de Administração - JB Formatura</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #000;
+      padding: 20px;
+      text-align: center;
+    }
+
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    .form-section {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Painel de Administração</h1>
-    <nav>
-      <a href="index.html">Voltar ao Site</a>
-    </nav>
-  </header>
+  <h1>Painel de Administração</h1>
 
-  <main>
-    <section class="admin-form">
-      <h2>Cadastrar Novo Cliente</h2>
-      <form onsubmit="return addClient()">
-        <label for="clientName">Nome:</label>
-        <input type="text" id="clientName" required />
+  <div class="form-section">
+    <h2>Cadastrar Formando</h2>
+    <form id="addClientForm" onsubmit="return addFormando()">
+      <label for="formandoName">Nome:</label>
+      <input type="text" id="formandoName" required />
 
-        <label for="clientCPF">CPF:</label>
-        <input type="text" id="clientCPF" required />
+      <label for="formandoCPF">CPF:</label>
+      <input type="text" id="formandoCPF" required />
 
-        <label for="albumPhotos">Foto do Álbum:</label>
-        <input type="file" id="albumPhotos" accept="image/*" required />
+      <label for="formandoFoto">Foto:</label>
+      <input type="file" id="formandoFoto" required />
 
-        <button type="submit">Cadastrar Cliente</button>
-      </form>
-    </section>
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
 
-    <section class="order-list">
-      <h2>Clientes Cadastrados</h2>
-      <ul id="orderList">
-        <!-- Clientes serão listados aqui -->
-      </ul>
-    </section>
-  </main>
+  <h2>Lista de Formandos</h2>
+  <div id="formandosList">
+    <!-- Lista de formandos será exibida aqui -->
+  </div>
 
-  <footer>
-    <p>© 2025 Álbum de Fotos</p>
-  </footer>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.3/dist/umd/supabase.min.js"></script>
   <script src="scripts.js"></script>
 </body>
 </html>
