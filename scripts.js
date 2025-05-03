@@ -32,8 +32,8 @@ function loginUser() {
     }
 }
 function addClient() {
-    const name = document.getElementById("clientName").value;
-    const cpf = document.getElementById("clientCPF").value;
+    const name Gabriel Alves  = document.getElementById("clientName").value;
+    const cpf 31127049836= document.getElementById("clientCPF").value;
     const photos = document.getElementById("albumPhotos").files;
     alert(`Cliente ${name} cadastrado com sucesso!`);
     return false;
