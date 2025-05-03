@@ -42,7 +42,24 @@ function viewAlbum(cpf) {
     }
 }
 
-// Função para cadastrar cliente no painel de administração
+// Função de login
+function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    // Defina as credenciais válidas para login (esses valores são apenas de exemplo)
+    const validEmail = "admin@admin.com";
+    const validPassword = "senha123";
+
+    if (email === validEmail && password === validPassword) {
+        // Se o login for bem-sucedido, redireciona para o painel de administração
+        window.location.href = "admin.html";  // Direciona para a página de administração
+    } else {
+        alert("Email ou senha incorretos. Tente novamente.");
+    }
+}
+
+// Função de cadastro de cliente (continua a mesma do exemplo anterior)
 function addClient() {
     const name = document.getElementById("clientName").value;
     const cpf = document.getElementById("clientCPF").value;
@@ -78,4 +95,6 @@ function addClient() {
         return false;
     };
     reader.readAsDataURL(photo); // Converte a foto para uma URL de base64
+}
+
 }
