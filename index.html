@@ -1,49 +1,35 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JB Formatura</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #fff;
-      color: #000;
-      padding: 20px;
-      text-align: center;
-    }
-
-    input, button {
-      padding: 10px;
-      margin: 10px;
-      font-size: 16px;
-    }
-
-    .album {
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 15px;
-      margin: 15px;
-      display: inline-block;
-    }
-
-    img {
-      border-radius: 8px;
-      max-width: 100%;
-      height: auto;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Álbum de Fotos</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Álbuns de Formatura</h1>
+    <header>
+        <h1>Bem-vindo ao Álbum de Fotos</h1>
+        <nav>
+            <a href="login.html">Área de Login</a>
+            <a href="admin.html" id="adminLink" style="display:none;">Acessar Painel de Administração</a> <!-- Link para admin, inicialmente escondido -->
+        </nav>
+    </header>
+    
+    <main>
+        <section class="search-section">
+            <input type="text" id="searchInput" placeholder="Busque seu álbum por nome ou CPF" />
+            <button onclick="searchAlbum()">Buscar</button>
+        </section>
 
-  <input type="text" id="searchInput" placeholder="Digite nome ou CPF..." />
-  <button onclick="searchAlbum()">Buscar</button>
+        <section id="albums">
+            <!-- Resultado da busca será exibido aqui -->
+        </section>
+    </main>
 
-  <section id="albums"></section>
+    <footer>
+        <p>© 2025 Álbum de Fotos</p>
+    </footer>
 
-  <!-- Supabase e Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.3/dist/umd/supabase.min.js"></script>
-  <script src="scripts.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
