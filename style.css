@@ -1,102 +1,78 @@
-/* Estilo geral */
-body {
-    font-family: Arial, sans-serif;
+/* Reset básico */
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    padding: 20px;
 }
 
 /* Cabeçalho */
 header {
-    background-color: #333;
+    background-color: #222;
     color: #fff;
-    padding: 1rem;
+    padding: 20px;
     text-align: center;
 }
 
-nav a {
+header nav a {
     color: #fff;
     text-decoration: none;
     margin: 0 15px;
+    font-weight: bold;
 }
 
-/* Área principal */
-main {
+/* Formulário */
+main form {
+    background-color: #fff;
     padding: 20px;
+    max-width: 500px;
+    margin: 30px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-/* Seção de busca */
-.search-section {
-    text-align: center;
-    margin-bottom: 20px;
+form label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
-input[type="text"] {
-    padding: 10px;
-    width: 80%;
-    max-width: 400px;
-    margin-bottom: 10px;
-}
-
-button {
-    padding: 10px 20px;
-    background-color: #007BFF;
-    border: none;
-    color: white;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-/* Resultados de álbuns */
-#albums {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-.album {
-    background-color: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 200px;
-}
-
-.album img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-/* Formulários */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 400px;
-    margin: auto;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="file"] {
+form input[type="text"],
+form input[type="file"] {
+    width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
+}
+
+form button {
+    margin-top: 20px;
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+form button:hover {
+    background-color: #0056b3;
 }
 
 /* Rodapé */
 footer {
     text-align: center;
-    padding: 10px;
-    background-color: #333;
+    margin-top: 40px;
+    padding: 15px;
+    background-color: #222;
     color: #fff;
-    position: relative;
-    margin-top: 30px;
+    font-size: 14px;
 }
