@@ -1,28 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Álbum de Fotos</title>
-    <link rel="stylesheet" href="style.css" />
-</head>
+    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  const supabase = supabase.createClient(
-    'https://cdstzbtewwbwjqhvhigy.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78'
-  );
-</script>
-<script src="scripts.js"></script>
-    
+</head>
 <body>
     <header>
         <h1>Bem-vindo ao Álbum de Fotos</h1>
         <nav>
-            <a href="login.html">Área de Login</a>
+            <a href="admin.html">Área do Administrador</a>
         </nav>
     </header>
-
+    
     <main>
         <section class="search-section">
             <input type="text" id="searchInput" placeholder="Busque por nome ou CPF" />
@@ -30,7 +22,7 @@
         </section>
 
         <section id="albums">
-            <!-- Resultados aparecerão aqui -->
+            <!-- Resultados da busca aparecerão aqui -->
         </section>
     </main>
 
