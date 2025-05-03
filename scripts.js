@@ -3,12 +3,11 @@ function loginUser() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    // Verificando as credenciais
     if (username === "admin" && password === "admin123") {
         window.location.href = "admin.html"; // Redireciona para a página de administração
         return false;
     } else {
-        alert("Credenciais inválidas"); // Exibe erro se as credenciais forem inválidas
+        alert("Credenciais inválidas");
         return false;
     }
 }
@@ -16,12 +15,11 @@ function loginUser() {
 // Função de Busca de Álbuns
 function searchAlbum() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const albums = [
-        { name: "João Silva", cpf: "12345678901", photos: ["photo1.jpg", "photo2.jpg"] },
-        { name: "Maria Oliveira", cpf: "98765432100", photos: ["photo3.jpg", "photo4.jpg"] }
-    ];
+    
+    // Recupera os álbuns salvos no localStorage
+    const albums = JSON.parse(localStorage.getItem("albums")) || [];
 
-    // Filtrando os álbuns que correspondem à busca
+    // Filtra os álbuns que correspondem à busca
     const results = albums.filter(album => 
         album.name.toLowerCase().includes(searchValue) || album.cpf.includes(searchValue)
     );
@@ -52,13 +50,43 @@ function addClient() {
     const cpf = document.getElementById("clientCPF").value;
     const photos = document.getElementById("albumPhotos").files;
 
-    // Aqui você poderia salvar os dados no banco de dados ou localStorage
-    alert(`Cliente ${name} cadastrado com sucesso!`);
+    // Verifica se há fotos
+    if (photos.length === 0) {
+        alert("Por favor, adicione fotos!");
+        return false;
+    }
 
-    // Limpa o formulário
-    document.getElementById("clientName").value = "";
-    document.getElementById("clientCPF").value = "";
-    document.getElementById("albumPhotos").value = "";
+    // Converte as fotos para URLs (como exemplo)
+    const photosArray = [];
+    for (let i = 0; i < photos.length; i++) {
+        const file = photos[i];
+        const reader = new FileReader();
+
+        reader.onloadend = function() {
+            // Adiciona a foto à lista de fotos do álbum
+            photosArray.push(reader.result);
+
+            // Salva o álbum no localStorage
+            const album = {
+                name: name,
+                cpf: cpf,
+                photos: photosArray
+            };
+
+            let albums = JSON.parse(localStorage.getItem("albums")) || [];
+            albums.push(album);
+            localStorage.setItem("albums", JSON.stringify(albums));
+
+            alert(`Cliente ${name} cadastrado com sucesso!`);
+
+            // Limpa o formulário
+            document.getElementById("clientName").value = "";
+            document.getElementById("clientCPF").value = "";
+            document.getElementById("albumPhotos").value = "";
+        };
+
+        reader.readAsDataURL(file); // Lê a foto como URL
+    }
 
     return false;
 }
