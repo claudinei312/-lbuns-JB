@@ -19,24 +19,34 @@ function loginUser() {
 function addClient() {
     const name = document.getElementById("clientName").value;
     const cpf = document.getElementById("clientCPF").value;
-    const photos = document.getElementById("albumPhotos").files;
+    const photoFile = document.getElementById("albumPhotos").files[0];
 
-    // Aqui você salvaria os dados no servidor ou banco de dados
-    alert(`Cliente ${name} cadastrado com sucesso!`);
+    if (!photoFile) {
+        alert("Por favor, selecione uma foto.");
+        return false;
+    }
 
-    // Simulação de salvamento: aqui você pode implementar o código para salvar no banco de dados
-    const albumData = {
-        name: name,
-        cpf: cpf,
-        photos: Array.from(photos).map(photo => URL.createObjectURL(photo)),
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const base64Photo = e.target.result;
+
+        const albumData = {
+            name: name,
+            cpf: cpf,
+            photo: base64Photo
+        };
+
+        let storedAlbums = JSON.parse(localStorage.getItem("albums")) || [];
+        storedAlbums.push(albumData);
+        localStorage.setItem("albums", JSON.stringify(storedAlbums));
+
+        alert(`Cliente ${name} cadastrado com sucesso!`);
     };
 
-    // Armazenando no localStorage (para testes), pode ser substituído por uma API real
-    let storedAlbums = JSON.parse(localStorage.getItem("albums")) || [];
-    storedAlbums.push(albumData);
-    localStorage.setItem("albums", JSON.stringify(storedAlbums));
+    reader.readAsDataURL(photoFile);
+    return false; // evita reload da página
+}
 
-    return false; // impede o envio do formulário
 }
 
 // Função de Busca de Álbuns
