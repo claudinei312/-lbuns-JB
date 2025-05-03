@@ -1,80 +1,79 @@
-// Simulação de armazenamento de dados em um array
-let clients = [];
+// Função de login
+function loginUser() {
+    // Obter os valores inseridos
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
-// Função para adicionar um novo cliente (formando)
-function addClient() {
-    const name = document.getElementById("clientName").value;
-    const cpf = document.getElementById("clientCPF").value;
-    const photos = document.getElementById("albumPhotos").files;
+    // Usuário e senha pré-definidos
+    const validUsername = "admin";
+    const validPassword = "admin123";
 
-    // Verificando se os campos estão preenchidos corretamente
-    if (!name || !cpf || photos.length === 0) {
-        alert("Por favor, preencha todos os campos corretamente!");
+    // Verificação
+    if (username === validUsername && password === validPassword) {
+        // Redirecionar para o painel de administração
+        window.location.href = "admin.html"; // Certifique-se de ter a página admin.html
+        return false;
+    } else {
+        alert("Credenciais inválidas");
         return false;
     }
-
-    // Adicionando o cliente no array de clientes
-    const client = {
-        name: name,
-        cpf: cpf,
-        photos: Array.from(photos).map(photo => URL.createObjectURL(photo))
-    };
-
-    // Armazenando o cliente na lista
-    clients.push(client);
-
-    alert(`Cliente ${name} cadastrado com sucesso!`);
-
-    // Limpar os campos após o cadastro
-    document.getElementById("clientName").value = "";
-    document.getElementById("clientCPF").value = "";
-    document.getElementById("albumPhotos").value = "";
-
-    // Atualizar a lista de pedidos de álbuns
-    updateOrderList();
-
-    return false; // Impedir o envio do formulário e recarregamento da página
 }
 
-// Função para atualizar a lista de pedidos de álbuns
-function updateOrderList() {
-    const orderList = document.getElementById("orderList");
-    orderList.innerHTML = ""; // Limpar lista atual
-
-    clients.forEach(client => {
-        const listItem = document.createElement("li");
-        listItem.innerHTML = `
-            <strong>${client.name}</strong> (CPF: ${client.cpf})
-            <br>
-            <img src="${client.photos[0]}" alt="${client.name}" width="100" />
-        `;
-        orderList.appendChild(listItem);
-    });
-}
-
-// Função de busca por nome ou CPF na página inicial
+// Função de busca de álbuns
 function searchAlbum() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const results = clients.filter(client => 
-        client.name.toLowerCase().includes(searchValue) || client.cpf.includes(searchValue)
+    const albums = [
+        { name: "João Silva", cpf: "12345678901", photos: ["photo1.jpg", "photo2.jpg"] },
+        { name: "Maria Oliveira", cpf: "98765432100", photos: ["photo3.jpg", "photo4.jpg"] }
+    ];
+
+    const results = albums.filter(album => 
+        album.name.toLowerCase().includes(searchValue) || album.cpf.includes(searchValue)
     );
 
     const albumsSection = document.getElementById("albums");
-    albumsSection.innerHTML = ''; // Limpar resultados anteriores
+    albumsSection.innerHTML = '';
 
-    results.forEach(client => {
+    results.forEach(album => {
         const albumDiv = document.createElement("div");
         albumDiv.classList.add("album");
         albumDiv.innerHTML = `
-            <h3>${client.name}</h3>
-            <p>CPF: ${client.cpf}</p>
-            <img src="${client.photos[0]}" alt="${client.name}" width="100" />
+            <h3>${album.name}</h3>
+            <img src="${album.photos[0]}" alt="${album.name}" width="100" />
+            <button onclick="viewAlbum('${album.cpf}')">Ver Álbum</button>
         `;
         albumsSection.appendChild(albumDiv);
     });
 }
 
-// Função para visualização do álbum (exemplo simples)
+// Função de visualização do álbum
 function viewAlbum(cpf) {
-    alert("Mostrando álbum para CPF: " + cpf);
+    const albums = [
+        { name: "João Silva", cpf: "12345678901", photos: ["photo1.jpg", "photo2.jpg"] },
+        { name: "Maria Oliveira", cpf: "98765432100", photos: ["photo3.jpg", "photo4.jpg"] }
+    ];
+
+    const album = albums.find(a => a.cpf === cpf);
+    if (album) {
+        alert(`Álbum de ${album.name} com as fotos: ${album.photos.join(', ')}`);
+    } else {
+        alert("Álbum não encontrado.");
+    }
+}
+
+// Função para cadastrar cliente no painel de administração
+function addClient() {
+    const name = document.getElementById("clientName").value;
+    const cpf = document.getElementById("clientCPF").value;
+    const photos = document.getElementById("albumPhotos").files;
+
+    // Aqui você salvaria os dados no servidor ou banco de dados
+    alert(`Cliente ${name} cadastrado com sucesso!`);
+
+    // Limpar os campos do formulário
+    document.getElementById("clientName").value = "";
+    document.getElementById("clientCPF").value = "";
+    document.getElementById("albumPhotos").value = "";
+
+    return false;
 }
