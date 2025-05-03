@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Painel de Administração</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <header>
@@ -16,27 +16,19 @@
 
     <main>
         <section class="admin-form">
-            <h2>Cadastrar Novo Cliente</h2>
+            <h2>Cadastrar Novo Formando</h2>
             <form onsubmit="return addClient()">
                 <label for="clientName">Nome:</label>
                 <input type="text" id="clientName" required />
 
-                <label for="albumPhotos">Fotos do Álbum:</label>
-<input type="file" id="albumPhotos" multiple accept="image/*" required />
-                
+                <label for="clientCPF">CPF:</label>
+                <input type="text" id="clientCPF" required />
 
-                <label for="albumPhotos">Fotos do Álbum (URL das imagens):</label>
-                <input type="text" id="albumPhotos" placeholder="Ex: foto1.jpg,foto2.jpg" required />
+                <label for="albumPhotos">Fotos:</label>
+                <input type="file" id="albumPhotos" accept="image/*" multiple required />
 
-                <button type="submit">Cadastrar Cliente</button>
+                <button type="submit">Cadastrar</button>
             </form>
-        </section>
-
-        <section class="order-list">
-            <h2>Lista de Clientes</h2>
-            <ul id="orderList">
-                <!-- Lista de clientes será exibida aqui -->
-            </ul>
         </section>
     </main>
 
