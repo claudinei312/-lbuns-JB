@@ -37,9 +37,15 @@ function loginUser() {
 function addClient() {
     const name = document.getElementById("clientName").value;
     const cpf = document.getElementById("clientCPF").value;
-    const photoInput = document.getElementById("albumPhotos").value;
+    const photoFiles = document.getElementById("albumPhotos").files;
 
-    const photos = photoInput.split(',').map(p => p.trim());
+    const photos = [];
+
+    for (let i = 0; i < photoFiles.length; i++) {
+        const file = photoFiles[i];
+        const url = URL.createObjectURL(file);
+        photos.push(url);
+    }
 
     const newClient = { name, cpf, photos };
     albumData.push(newClient);
@@ -47,6 +53,8 @@ function addClient() {
     alert(`Cliente ${name} cadastrado com sucesso!`);
     updateClientList();
     return false;
+}
+
 }
 
 function updateClientList() {
