@@ -4,32 +4,31 @@ body {
     padding: 0;
     background-color: #f0f0f0;
 }
+
 header {
     background-color: #333;
     color: #fff;
     padding: 1rem;
     text-align: center;
 }
-header h1 {
-    margin: 0;
-}
+
 nav a {
     color: #fff;
     text-decoration: none;
     margin: 0 10px;
 }
+
 main {
     padding: 20px;
 }
-.search-section {
-    margin-bottom: 20px;
-}
-input[type="text"], input[type="password"] {
+
+input[type="text"] {
     padding: 10px;
     margin-bottom: 10px;
     width: 100%;
-    max-width: 300px;
+    max-width: 400px;
 }
+
 button {
     padding: 10px 20px;
     background-color: #007BFF;
@@ -37,12 +36,20 @@ button {
     border: none;
     cursor: pointer;
 }
+
 button:hover {
     background-color: #0056b3;
 }
+
 footer {
     text-align: center;
     padding: 10px;
     background-color: #333;
     color: #fff;
 }
+
+.album {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 15px;
+    background-color: #fff;
