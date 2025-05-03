@@ -1,24 +1,3 @@
-// Função de login
-function loginUser() {
-    // Obter os valores inseridos
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    // Usuário e senha pré-definidos
-    const validUsername = "admin";
-    const validPassword = "admin123";
-
-    // Verificação
-    if (username === validUsername && password === validPassword) {
-        // Redirecionar para o painel de administração
-        window.location.href = "admin.html"; // Certifique-se de ter a página admin.html
-        return false;
-    } else {
-        alert("Credenciais inválidas");
-        return false;
-    }
-}
-
 // Função de busca de álbuns
 function searchAlbum() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
@@ -49,7 +28,15 @@ function viewAlbum(cpf) {
     const album = albums.find(a => a.cpf === cpf);
 
     if (album) {
-        alert(`Álbum de ${album.name} com a foto: ${album.photo}`);
+        // Verifica se a URL da foto foi encontrada
+        const imageUrl = album.photo;
+        if (imageUrl) {
+            // Exibe a foto em um formato de popup ou nova janela
+            const imgWindow = window.open("", "_blank");
+            imgWindow.document.write(`<img src="${imageUrl}" alt="${album.name}" style="width:100%; height:auto;">`);
+        } else {
+            alert("Foto não encontrada.");
+        }
     } else {
         alert("Álbum não encontrado.");
     }
