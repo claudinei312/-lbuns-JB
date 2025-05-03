@@ -1,39 +1,66 @@
 let albumData = [];
 
-function addClient() {
-    const name = document.getElementById("clientName").value;
-    const cpf = document.getElementById("clientCPF").value;
-    const photosInput = document.getElementById("albumPhotos").value;
-
-    const photos = photosInput.split(',').map(photo => photo.trim());
-
-    albumData.push({ name, cpf, photos });
-    alert("Cliente adicionado com sucesso!");
-    document.querySelector("form").reset();
-    return false;
-}
-
 function searchAlbum() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const albumsSection = document.getElementById("albums");
-    albumsSection.innerHTML = '';
-
     const results = albumData.filter(album =>
-        album.name.toLowerCase().includes(searchValue) ||
-        album.cpf.includes(searchValue)
+        album.name.toLowerCase().includes(searchValue) || album.cpf.includes(searchValue)
     );
 
-    if (results.length === 0) {
-        albumsSection.innerHTML = "<p>Nenhum álbum encontrado.</p>";
-        return;
-    }
+    const albumsSection = document.getElementById("albums");
+    albumsSection.innerHTML = '';
 
     results.forEach(album => {
         const albumDiv = document.createElement("div");
         albumDiv.classList.add("album");
         albumDiv.innerHTML = `
             <h3>${album.name}</h3>
-            ${album.photos.map(photo => `<img src="${photo}" alt="${album.name}" width="100">`).join('')}
+            <img src="${album.photos[0]}" alt="${album.name}" width="100" />
+            <button onclick="viewAlbum('${album.cpf}')">Ver Álbum</button>
         `;
         albumsSection.appendChild(albumDiv);
     });
+}
+
+function loginUser() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    if (username === "admin" && password === "admin123") {
+        window.location.href = "admin.html";
+        return false;
+    } else {
+        alert("Credenciais inválidas");
+        return false;
+    }
+}
+
+function addClient() {
+    const name = document.getElementById("clientName").value;
+    const cpf = document.getElementById("clientCPF").value;
+    const photoInput = document.getElementById("albumPhotos").value;
+
+    const photos = photoInput.split(',').map(p => p.trim());
+
+    const newClient = { name, cpf, photos };
+    albumData.push(newClient);
+
+    alert(`Cliente ${name} cadastrado com sucesso!`);
+    updateClientList();
+    return false;
+}
+
+function updateClientList() {
+    const list = document.getElementById("orderList");
+    list.innerHTML = '';
+    albumData.sort((a, b) => a.name.localeCompare(b.name));
+
+    albumData.forEach(client => {
+        const item = document.createElement("li");
+        item.textContent = `${client.name} - CPF: ${client.cpf}`;
+        list.appendChild(item);
+    });
+}
+
+function viewAlbum(cpf) {
+    alert(`Exibindo álbum do CPF: ${cpf}`);
+}
