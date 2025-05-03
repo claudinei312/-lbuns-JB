@@ -74,3 +74,8 @@ if (window.location.href.includes("admin.html")) {
         window.location.href = "login.html"; // Se não estiver logado, redireciona para a página de login
     }
 }
+
+// Verificar login na página inicial (index.html) e mostrar o link para o painel de administração se logado
+if (localStorage.getItem("loggedIn") === "true") {
+    document.getElementById("adminLink").style.display = "inline"; // Mostrar link de admin
+}
