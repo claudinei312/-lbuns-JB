@@ -1,23 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Login</title>
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Álbum de Fotos</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header><h1>Login do Administrador</h1></header>
+    <header>
+        <h1>Login</h1>
+    </header>
+
     <main>
-        <form onsubmit="return loginUser()">
-            <label for="email">Email:</label>
-            <input type="email" id="email" required />
-            <label for="password">Senha:</label>
-            <input type="password" id="password" required />
-            <button type="submit">Entrar</button>
-        </form>
+        <section class="login-section">
+            <form onsubmit="return loginUser()">
+                <label for="loginEmail">E-mail:</label>
+                <input type="email" id="loginEmail" name="loginEmail" required />
+                
+                <label for="loginPassword">Senha:</label>
+                <input type="password" id="loginPassword" name="loginPassword" required />
+                
+                <button type="submit">Entrar</button>
+            </form>
+        </section>
     </main>
-    <footer><p>© 2025 JB Formatura</p></footer>
+
+    <footer>
+        <p>© 2025 Álbum de Fotos</p>
+    </footer>
+
     <script src="scripts.js"></script>
 </body>
 </html>
