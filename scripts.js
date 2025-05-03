@@ -42,59 +42,79 @@ function viewAlbum(cpf) {
     }
 }
 
-// Função de login
+// LOGIN
 function login() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    // Defina as credenciais válidas para login (esses valores são apenas de exemplo)
     const validEmail = "admin@admin.com";
     const validPassword = "senha123";
 
     if (email === validEmail && password === validPassword) {
-        // Se o login for bem-sucedido, redireciona para o painel de administração
-        window.location.href = "admin.html";  // Direciona para a página de administração
+        window.location.href = "admin.html";
     } else {
-        alert("Email ou senha incorretos. Tente novamente.");
+        alert("Email ou senha inválidos.");
     }
 }
 
-// Função de cadastro de cliente (continua a mesma do exemplo anterior)
+// CADASTRAR CLIENTE COM FOTO
 function addClient() {
     const name = document.getElementById("clientName").value;
     const cpf = document.getElementById("clientCPF").value;
-    const photo = document.getElementById("albumPhotos").files[0]; // Pega o arquivo de foto
+    const photoInput = document.getElementById("albumPhotos");
 
-    // Verifica se a foto foi selecionada
-    if (!photo) {
-        alert("Por favor, selecione uma foto.");
+    if (!name || !cpf || !photoInput.files.length) {
+        alert("Preencha todos os campos e selecione uma foto.");
         return;
     }
 
-    // Cria uma URL para a foto usando FileReader
     const reader = new FileReader();
-    reader.onloadend = function () {
-        const photoUrl = reader.result;
+    reader.onload = function () {
+        const photoData = reader.result;
 
-        // Recupera os álbuns existentes ou cria um novo array
-        const albums = JSON.parse(localStorage.getItem("albums")) || [];
-        
-        // Adiciona o novo álbum
-        albums.push({ name, cpf, photo: photoUrl });
+        const existing = JSON.parse(localStorage.getItem("albums")) || [];
+        existing.push({ name, cpf, photo: photoData });
+        localStorage.setItem("albums", JSON.stringify(existing));
 
-        // Salva os álbuns no localStorage
-        localStorage.setItem("albums", JSON.stringify(albums));
+        alert("Cadastro realizado com sucesso!");
 
-        alert(`Cliente ${name} cadastrado com sucesso!`);
-
-        // Limpar os campos do formulário
         document.getElementById("clientName").value = "";
         document.getElementById("clientCPF").value = "";
         document.getElementById("albumPhotos").value = "";
-
-        return false;
     };
-    reader.readAsDataURL(photo); // Converte a foto para uma URL de base64
+    reader.readAsDataURL(photoInput.files[0]);
+}
+
+// BUSCAR CLIENTE
+function searchClient() {
+    const searchInput = document.getElementById("searchInput").value.toLowerCase();
+    const resultArea = document.getElementById("resultArea");
+    resultArea.innerHTML = "";
+
+    const albums = JSON.parse(localStorage.getItem("albums")) || [];
+
+    const filtered = albums.filter(entry =>
+        entry.name.toLowerCase().includes(searchInput) ||
+        entry.cpf.toLowerCase().includes(searchInput)
+    );
+
+    if (filtered.length === 0) {
+        resultArea.innerHTML = "<p>Nenhum resultado encontrado.</p>";
+        return;
+    }
+
+    filtered.forEach(entry => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <p><strong>Nome:</strong> ${entry.name}</p>
+            <p><strong>CPF:</strong> ${entry.cpf}</p>
+            <img src="${entry.photo}" alt="Foto de ${entry.name}" width="200" />
+            <hr>
+        `;
+        resultArea.appendChild(div);
+    });
+}
+
 }
 
 }
