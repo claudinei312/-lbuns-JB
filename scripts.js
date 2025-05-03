@@ -22,10 +22,7 @@ function loginUser() {
 // Função de busca de álbuns
 function searchAlbum() {
     const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const albums = [
-        { name: "João Silva", cpf: "12345678901", photos: ["photo1.jpg", "photo2.jpg"] },
-        { name: "Maria Oliveira", cpf: "98765432100", photos: ["photo3.jpg", "photo4.jpg"] }
-    ];
+    const albums = JSON.parse(localStorage.getItem("albums")) || []; // Recupera os álbuns do localStorage
 
     const results = albums.filter(album => 
         album.name.toLowerCase().includes(searchValue) || album.cpf.includes(searchValue)
@@ -39,7 +36,7 @@ function searchAlbum() {
         albumDiv.classList.add("album");
         albumDiv.innerHTML = `
             <h3>${album.name}</h3>
-            <img src="${album.photos[0]}" alt="${album.name}" width="100" />
+            <img src="${album.photo}" alt="${album.name}" width="100" />
             <button onclick="viewAlbum('${album.cpf}')">Ver Álbum</button>
         `;
         albumsSection.appendChild(albumDiv);
@@ -48,14 +45,11 @@ function searchAlbum() {
 
 // Função de visualização do álbum
 function viewAlbum(cpf) {
-    const albums = [
-        { name: "João Silva", cpf: "12345678901", photos: ["photo1.jpg", "photo2.jpg"] },
-        { name: "Maria Oliveira", cpf: "98765432100", photos: ["photo3.jpg", "photo4.jpg"] }
-    ];
-
+    const albums = JSON.parse(localStorage.getItem("albums")) || []; // Recupera os álbuns do localStorage
     const album = albums.find(a => a.cpf === cpf);
+
     if (album) {
-        alert(`Álbum de ${album.name} com as fotos: ${album.photos.join(', ')}`);
+        alert(`Álbum de ${album.name} com a foto: ${album.photo}`);
     } else {
         alert("Álbum não encontrado.");
     }
@@ -65,15 +59,36 @@ function viewAlbum(cpf) {
 function addClient() {
     const name = document.getElementById("clientName").value;
     const cpf = document.getElementById("clientCPF").value;
-    const photos = document.getElementById("albumPhotos").files;
+    const photo = document.getElementById("albumPhotos").files[0]; // Pega o arquivo de foto
 
-    // Aqui você salvaria os dados no servidor ou banco de dados
-    alert(`Cliente ${name} cadastrado com sucesso!`);
+    // Verifica se a foto foi selecionada
+    if (!photo) {
+        alert("Por favor, selecione uma foto.");
+        return;
+    }
 
-    // Limpar os campos do formulário
-    document.getElementById("clientName").value = "";
-    document.getElementById("clientCPF").value = "";
-    document.getElementById("albumPhotos").value = "";
+    // Cria uma URL para a foto usando FileReader
+    const reader = new FileReader();
+    reader.onloadend = function () {
+        const photoUrl = reader.result;
 
-    return false;
+        // Recupera os álbuns existentes ou cria um novo array
+        const albums = JSON.parse(localStorage.getItem("albums")) || [];
+        
+        // Adiciona o novo álbum
+        albums.push({ name, cpf, photo: photoUrl });
+
+        // Salva os álbuns no localStorage
+        localStorage.setItem("albums", JSON.stringify(albums));
+
+        alert(`Cliente ${name} cadastrado com sucesso!`);
+
+        // Limpar os campos do formulário
+        document.getElementById("clientName").value = "";
+        document.getElementById("clientCPF").value = "";
+        document.getElementById("albumPhotos").value = "";
+
+        return false;
+    };
+    reader.readAsDataURL(photo); // Converte a foto para uma URL de base64
 }
