@@ -51,25 +51,17 @@ function addClient() {
 
 // Função de Busca de Álbuns
 function searchAlbum() {
-    const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const albums = JSON.parse(localStorage.getItem("albums")) || [];
-
-    const results = albums.filter(album =>
-        album.name.toLowerCase().includes(searchValue) || album.cpf.includes(searchValue)
-    );
-
-    const albumsSection = document.getElementById("albums");
-    albumsSection.innerHTML = ''; // Limpa a seção antes de mostrar os resultados
-
     results.forEach(album => {
-        const albumDiv = document.createElement("div");
-        albumDiv.classList.add("album");
-        albumDiv.innerHTML = `
-            <h3>${album.name}</h3>
-            <img src="${album.photos[0]}" alt="${album.name}" width="100" />
-            <button onclick="viewAlbum('${album.cpf}')">Ver Álbum</button>
-        `;
-        albumsSection.appendChild(albumDiv);
+    const albumDiv = document.createElement("div");
+    albumDiv.classList.add("album");
+    albumDiv.innerHTML = `
+        <h3>${album.name}</h3>
+        <img src="${album.photo}" alt="${album.name}" width="100" />
+        <p>CPF: ${album.cpf}</p>
+    `;
+    albumsSection.appendChild(albumDiv);
+});
+
     });
 }
 
