@@ -2,15 +2,21 @@ const supabaseUrl = "https://cdstzbtewwbwjqhvhigy.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78";
 const supabase = supabasejs.createClient(supabaseUrl, supabaseKey);
 
-async function loginUser() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    if (email === "admin@jb.com" && password === "123456") {
-        window.location.href = "painel.html";
+// Função para login
+function loginUser() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    // Verifica se o email e a senha estão corretos
+    if (email === "admin@jbformaturas.com" && password === "admin123") {
+        window.location.href = "painel.html"; // Redireciona para o painel de administração
     } else {
-        alert("Credenciais inválidas.");
+        alert("E-mail ou senha inválidos.");
     }
-    return false;
+
+    return false; // Evita o envio do formulário
+}
+
 }
 
 async function addClient() {
