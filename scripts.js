@@ -7,14 +7,20 @@ function loginUser() {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
+    // E-mail e senha de exemplo (se quiser alterar, basta modificar aqui)
+    const validEmail = "admin@jbformaturas.com";
+    const validPassword = "admin123";
+
     // Verifica se o email e a senha estão corretos
-    if (email === "admin@jbformaturas.com" && password === "admin123") {
+    if (email === validEmail && password === validPassword) {
         window.location.href = "painel.html"; // Redireciona para o painel de administração
     } else {
         alert("E-mail ou senha inválidos.");
     }
 
     return false; // Evita o envio do formulário
+}
+
 }
 
 }
