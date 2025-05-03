@@ -9,23 +9,40 @@
 <body>
     <header>
         <h1>Painel de Administração</h1>
-        <nav><a href="index.html">Voltar ao Início</a></nav>
+        <nav>
+            <a href="index.html">Voltar ao Site</a>
+        </nav>
     </header>
+
     <main>
-        <section>
-            <h2>Cadastrar Novo Álbum</h2>
+        <section class="admin-form">
+            <h2>Cadastrar Novo Cliente</h2>
             <form onsubmit="return addClient()">
                 <label for="clientName">Nome:</label>
                 <input type="text" id="clientName" required />
+
                 <label for="clientCPF">CPF:</label>
                 <input type="text" id="clientCPF" required />
-                <label for="photoFile">Foto:</label>
-                <input type="file" id="photoFile" accept="image/*" required />
-                <button type="submit">Cadastrar</button>
+
+                <label for="albumPhotos">Fotos do Álbum:</label>
+                <input type="file" id="albumPhotos" multiple required />
+
+                <button type="submit">Cadastrar Cliente</button>
             </form>
         </section>
+
+        <section class="order-list">
+            <h2>Pedidos de Álbuns</h2>
+            <ul id="orderList">
+                <!-- Pedidos serão listados aqui -->
+            </ul>
+        </section>
     </main>
-    <footer><p>© 2025 JB Formatura</p></footer>
+
+    <footer>
+        <p>© 2025 Álbum de Fotos</p>
+    </footer>
+
     <script src="scripts.js"></script>
 </body>
 </html>
