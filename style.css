@@ -1,3 +1,4 @@
+/* Estilo geral */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -5,6 +6,7 @@ body {
     background-color: #f0f0f0;
 }
 
+/* Cabeçalho */
 header {
     background-color: #333;
     color: #fff;
@@ -15,43 +17,86 @@ header {
 nav a {
     color: #fff;
     text-decoration: none;
-    margin: 0 10px;
+    margin: 0 15px;
 }
 
+/* Área principal */
 main {
     padding: 20px;
 }
 
-.search-section, .login-section, .admin-form {
+/* Seção de busca */
+.search-section {
+    text-align: center;
     margin-bottom: 20px;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"] {
     padding: 10px;
+    width: 80%;
+    max-width: 400px;
     margin-bottom: 10px;
-    width: 100%;
-    max-width: 300px;
 }
 
 button {
     padding: 10px 20px;
     background-color: #007BFF;
-    color: #fff;
     border: none;
+    color: white;
     cursor: pointer;
+    border-radius: 4px;
 }
 
 button:hover {
     background-color: #0056b3;
 }
 
+/* Resultados de álbuns */
+#albums {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.album {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 200px;
+}
+
+.album img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* Formulários */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin: auto;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Rodapé */
 footer {
     text-align: center;
     padding: 10px;
     background-color: #333;
     color: #fff;
-}
-
-.album {
-    margin-bottom: 20px;
+    position: relative;
+    margin-top: 30px;
 }
