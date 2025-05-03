@@ -2,16 +2,18 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - JB Formatura</title>
 </head>
 <body>
   <h1>Login do Administrador</h1>
   <form onsubmit="return login()">
-    <input type="email" id="email" placeholder="E-mail" required /><br/>
-    <input type="password" id="password" placeholder="Senha" required /><br/>
+    <input type="email" id="email" placeholder="E-mail" required />
+    <input type="password" id="password" placeholder="Senha" required />
     <button type="submit">Entrar</button>
+    <p id="error" style="color:red;"></p>
   </form>
-  <p id="error" style="color:red;"></p>
+
   <script src="scripts.js"></script>
 </body>
 </html>
