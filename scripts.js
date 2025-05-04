@@ -57,11 +57,12 @@ async function carregarCadastros() {
   }
 }
 
-// Busca na página inicial
+// Busca na página inicial com exibição correta das fotos e botões
 document.getElementById('formBusca')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const termo = document.getElementById('busca').value.trim().toLowerCase();
   const { data } = await supabase.from('formandos').select('*');
+
   const resultados = data.filter(f => f.nome.toLowerCase().includes(termo) || f.cpf.includes(termo));
 
   const container = document.getElementById('resultadoBusca');
@@ -74,15 +75,20 @@ document.getElementById('formBusca')?.addEventListener('submit', async (e) => {
 
   resultados.forEach(formando => {
     const div = document.createElement('div');
+    div.className = 'formando-card';
     div.innerHTML = `<h3>${formando.nome} - CPF: ${formando.cpf}</h3>`;
-    
-    formando.fotos.forEach((url, i) => {
-      const img = document.createElement('img');
-      img.src = url;
-      img.alt = `Foto ${i + 1}`;
-      img.style.maxWidth = '150px';
-      div.appendChild(img);
-    });
+
+    // Garante que é um array
+    if (Array.isArray(formando.fotos)) {
+      formando.fotos.forEach((url, i) => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = `Foto ${i + 1}`;
+        img.style.maxWidth = '150px';
+        img.style.margin = '5px';
+        div.appendChild(img);
+      });
+    }
 
     const btns = document.createElement('div');
     btns.innerHTML = `
@@ -92,6 +98,9 @@ document.getElementById('formBusca')?.addEventListener('submit', async (e) => {
     `;
     div.appendChild(btns);
     container.appendChild(div);
+  });
+});
+
   });
 });
 
