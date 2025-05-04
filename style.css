@@ -1,78 +1,21 @@
-/* Reset básico */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f7f7f7;
-    color: #333;
-    padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #fff;
+  color: #000;
+  padding: 20px;
 }
 
-/* Cabeçalho */
-header {
-    background-color: #222;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
+input, button {
+  display: block;
+  margin: 10px 0;
+  padding: 8px;
+  width: 100%;
+  max-width: 300px;
 }
 
-header nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 15px;
-    font-weight: bold;
-}
-
-/* Formulário */
-main form {
-    background-color: #fff;
-    padding: 20px;
-    max-width: 500px;
-    margin: 30px auto;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-form label {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-form input[type="text"],
-form input[type="file"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-
-form button {
-    margin-top: 20px;
-    background-color: #007bff;
-    color: #fff;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-form button:hover {
-    background-color: #0056b3;
-}
-
-/* Rodapé */
-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding: 15px;
-    background-color: #222;
-    color: #fff;
-    font-size: 14px;
+img {
+  margin-top: 10px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
