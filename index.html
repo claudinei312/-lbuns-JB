@@ -1,17 +1,23 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Busca de Formandos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JB Formatura</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>JB Formatura</h1>
-    <input type="text" id="searchInput" placeholder="Buscar por nome ou CPF" />
-    <div id="results"></div>
-    <a href="login.html">Acesso ao Painel</a>
+  <h1>JB Formatura</h1>
+  <form id="buscaForm">
+    <input type="text" id="busca" placeholder="Buscar por nome ou CPF" />
+    <button type="submit">Buscar</button>
+  </form>
+  <div id="resultados"></div>
+  <div id="acoesCompra" style="display:none;">
+    <button onclick="comprar('digital')">Comprar Digital</button>
+    <button onclick="comprar('fisico')">Comprar Físico</button>
+    <p>O pagamento será realizado apenas após o recebimento do álbum.</p>
   </div>
   <script src="scripts.js"></script>
 </body>
