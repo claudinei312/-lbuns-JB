@@ -1,35 +1,132 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Painel Admin - JB Formatura</title>
+  <style>
+    body { font-family: Arial; background: #f9f9f9; padding: 20px; }
+    input, button { margin: 5px; padding: 8px; }
+    .escondido { display: none; }
+  </style>
 </head>
 <body>
-    <div class="admin-container">
-        <h2>Painel Administrativo</h2>
-        <h3>Cadastro de Formandos</h3>
+  <div id="acesso">
+    <h2>Digite o código de acesso:</h2>
+    <input type="password" id="codigoAcesso" placeholder="4 dígitos">
+    <button onclick="verificarCodigo()">Entrar</button>
+  </div>
 
-        <form id="cadastroForm" onsubmit="event.preventDefault(); cadastrarFormando();">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" placeholder="Nome do formando" required>
+  <div id="painel" class="escondido">
+    <h2>Cadastrar novo formando</h2>
+    <input id="nome" placeholder="Nome">
+    <input id="cpf" placeholder="CPF">
+    <input type="file" id="fotos" multiple>
+    <button onclick="cadastrar()">Salvar</button>
+    <button onclick="voltarInicio()">Voltar ao início</button>
 
-            <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" placeholder="CPF do formando" required>
+    <h3>Formandos cadastrados</h3>
+    <ul id="listaFormandos"></ul>
 
-            <label for="foto">Foto:</label>
-            <input type="file" id="foto" accept="image/*" required>
+    <h3>Compras registradas</h3>
+    <ul id="listaCompras"></ul>
+  </div>
 
-            <button type="submit">Cadastrar</button>
-        </form>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="scripts.js"></script>
+  <script>
+    const acessoDiv = document.getElementById('acesso');
+    const painelDiv = document.getElementById('painel');
 
-        <h3>Formandos Cadastrados</h3>
-        <ul id="formandos-list"></ul>
+    function verificarCodigo() {
+      const codigo = document.getElementById('codigoAcesso').value;
+      if (codigo === '1811') {
+        acessoDiv.style.display = 'none';
+        painelDiv.classList.remove('escondido');
+        carregarFormandos();
+        carregarCompras();
+      } else {
+        alert('Código inválido.');
+      }
+    }
 
-        <a href="index.html">Voltar à Página Inicial</a>
-    </div>
+    function voltarInicio() {
+      window.location.href = 'index.html';
+    }
 
-    <script src="script.js"></script>
+    async function cadastrar() {
+      const nome = document.getElementById('nome').value.trim();
+      const cpf = document.getElementById('cpf').value.trim();
+      const fotosInput = document.getElementById('fotos');
+
+      if (!nome || !cpf || fotosInput.files.length === 0) {
+        alert('Preencha todos os campos e selecione pelo menos uma foto.');
+        return;
+      }
+
+      const urls = [];
+      for (let file of fotosInput.files) {
+        const { data, error } = await supabase
+          .storage
+          .from('fotos')
+          .upload(`${cpf}/${Date.now()}_${file.name}`, file);
+
+        if (error) {
+          alert('Erro ao enviar: ' + file.name);
+        } else {
+          const url = `${supabaseUrl}/storage/v1/object/public/fotos/${data.path}`;
+          urls.push(url);
+        }
+      }
+
+      const { error: insertError } = await supabase
+        .from('formandos')
+        .insert([{ nome, cpf, fotos: urls }]);
+
+      if (insertError) {
+        alert('Erro ao salvar cadastro.');
+      } else {
+        alert('Cadastro salvo!');
+        carregarFormandos();
+        document.getElementById('nome').value = '';
+        document.getElementById('cpf').value = '';
+        document.getElementById('fotos').value = '';
+      }
+    }
+
+    async function carregarFormandos() {
+      const { data, error } = await supabase.from('formandos').select('*');
+      const lista = document.getElementById('listaFormandos');
+      lista.innerHTML = '';
+
+      if (!error && data.length) {
+        data.forEach(f => {
+          const li = document.createElement('li');
+          li.textContent = `${f.nome} | CPF: ${f.cpf} | Fotos: ${f.fotos?.length || 0}`;
+          lista.appendChild(li);
+        });
+      }
+    }
+
+    async function carregarCompras() {
+      const { data, error } = await supabase.from('compras').select('*');
+      const lista = document.getElementById('listaCompras');
+      lista.innerHTML = '';
+
+      if (!error && data.length) {
+        data.forEach(c => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <strong>${c.nome}</strong> (${c.cpf})<br>
+            Tipo: ${c.tipo} - R$${c.valor}<br>
+            Endereço: ${c.endereco}<br>
+            Contato: ${c.contato}<br>
+            Fotos: ${c.fotos.length}<br>
+            <hr>
+          `;
+          lista.appendChild(li);
+        });
+      }
+    }
+  </script>
 </body>
 </html>
