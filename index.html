@@ -1,39 +1,27 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Cadastro de Formandos</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JB Formatura - Busca</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div id="login-container">
-        <h2>Área Administrativa</h2>
-        <label for="codigo">Digite o código de acesso (1811):</label>
-        <input type="text" id="codigo" placeholder="Código de Acesso" />
-        <button onclick="verificarCodigo()">Entrar</button>
+  <div class="container">
+    <h1>JB Formatura</h1>
+    <input type="text" id="busca" placeholder="Digite seu nome ou CPF" />
+    <button onclick="buscarFotos()">Buscar</button>
+    <div id="resultados"></div>
+    <div id="formularioCompra" style="display: none;">
+      <h3>Preencha seus dados para adquirir o álbum</h3>
+      <input type="text" id="nomeComprador" placeholder="Seu nome completo" required />
+      <input type="text" id="cpfComprador" placeholder="Seu CPF" required />
+      <input type="text" id="endereco" placeholder="Seu endereço completo" required />
+      <input type="text" id="contato" placeholder="Telefone ou e-mail" required />
+      <button onclick="finalizarCompra()">Finalizar Pedido</button>
     </div>
+  </div>
 
-    <div id="admin-container" style="display:none;">
-        <h2>Painel de Cadastro de Formandos</h2>
-        <form id="form-cadastro">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" required />
-            <br />
-            <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" required />
-            <br />
-            <label for="foto">Foto:</label>
-            <input type="file" id="foto" accept="image/*" required />
-            <br />
-            <button type="button" onclick="cadastrarFormando()">Cadastrar Formando</button>
-        </form>
-
-        <h3>Formandos Cadastrados:</h3>
-        <ul id="formandos-list"></ul>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="script.js"></script>
+  <script src="scripts.js"></script>
 </body>
 </html>
