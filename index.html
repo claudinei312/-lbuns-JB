@@ -1,26 +1,28 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formatura</title>
+    <title>Formatura - Página Inicial</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="login-container">
-        <h2>Área Administrativa</h2>
-        <label for="code">Código de Acesso (4 dígitos):</label>
-        <input type="password" id="code" maxlength="4" placeholder="Digite o código" />
+    <header>
+        <h1>Bem-vindo ao sistema de fotos de formatura</h1>
+    </header>
+
+    <section id="access-section">
+        <h2>Acesso Administrativo</h2>
+        <input type="password" id="code" placeholder="Digite o código de acesso">
         <button onclick="accessAdminPanel()">Acessar Painel</button>
-    </div>
+    </section>
 
-    <div id="search-container">
-        <h2>Buscar Formandos</h2>
-        <input type="text" id="search-input" placeholder="Digite o nome ou CPF para buscar" />
+    <section id="search-section">
+        <h2>Buscar Formando</h2>
+        <input type="text" id="search-input" placeholder="Digite o nome ou CPF do formando">
         <button onclick="search()">Buscar</button>
-    </div>
-
-    <div id="results"></div>
+        <div id="results"></div>
+    </section>
 
     <script src="scripts.js"></script>
 </body>
