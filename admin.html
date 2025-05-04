@@ -1,90 +1,93 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel Administrativo</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo</title>
 </head>
 <body>
-  <h1>Painel Administrativo</h1>
+    <h2>Painel Administrativo</h2>
+    <a href="index.html">Voltar para a página inicial</a>
+    <form id="cadastro-form">
+        <input type="text" id="nome" placeholder="Nome" required>
+        <input type="text" id="cpf" placeholder="CPF" required>
+        <input type="file" id="foto" accept="image/*" required multiple>
+        <button type="submit">Cadastrar</button>
+    </form>
 
-  <form id="cadastroForm">
-    <input type="text" id="nome" placeholder="Nome" required />
-    <input type="text" id="cpf" placeholder="CPF" required />
-    <input type="file" id="fotos" accept="image/*" multiple required />
-    <button type="submit">Cadastrar</button>
-    <button type="button" onclick="voltarInicio()">Voltar à Página Inicial</button>
-  </form>
+    <h3>Lista de Registros</h3>
+    <ul id="lista-registros"></ul>
 
-  <h2>Lista de Cadastrados</h2>
-  <div id="listaCadastrados"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';  // Coloque a URL do seu Supabase aqui
+        const SUPABASE_KEY = 'YOUR_SUPABASE_KEY';  // Coloque a chave do seu Supabase aqui
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script>
-    const SUPABASE_URL = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
-    const SUPABASE_KEY = 'YOUR_PUBLIC_ANON_KEY';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    document.getElementById('cadastroForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const nome = document.getElementById('nome').value.trim();
-      const cpf = document.getElementById('cpf').value.trim();
-      const arquivos = document.getElementById('fotos').files;
-
-      const urls = [];
-
-      for (const arquivo of arquivos) {
-        const nomeArquivo = `${Date.now()}_${arquivo.name}`;
-        const { data, error } = await supabase.storage
-          .from('fotos')
-          .upload(nomeArquivo, arquivo);
-
-        if (!error) {
-          const { data: urlData } = supabase.storage
-            .from('fotos')
-            .getPublicUrl(nomeArquivo);
-          urls.push(urlData.publicUrl);
+        // Verifica se o usuário está logado
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html'; // Redireciona para o login caso não esteja logado
         }
-      }
 
-      const { error: insertError } = await supabase
-        .from('formandos')
-        .insert([{ nome, cpf, fotos: urls }]);
+        // Função para cadastrar dados
+        document.getElementById('cadastro-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-      if (!insertError) {
-        alert('Cadastro realizado com sucesso!');
-        document.getElementById('cadastroForm').reset();
-        carregarLista();
-      } else {
-        alert('Erro ao cadastrar!');
-        console.error(insertError);
-      }
-    });
+            const nome = document.getElementById('nome').value;
+            const cpf = document.getElementById('cpf').value;
+            const fotos = document.getElementById('foto').files;
 
-    async function carregarLista() {
-      const { data, error } = await supabase
-        .from('formandos')
-        .select('nome, cpf, fotos');
+            // Faz upload das fotos para o Supabase
+            let fotosUrls = [];
+            for (const foto of fotos) {
+                const { data, error } = await supabase.storage
+                    .from('fotos')
+                    .upload('fotos/' + Date.now() + foto.name, foto);
+                if (data) {
+                    const url = supabase.storage.from('fotos').getPublicUrl(data.path).publicURL;
+                    fotosUrls.push(url);
+                } else {
+                    console.error('Erro no upload da foto:', error.message);
+                    alert('Erro no upload da foto!');
+                    return;
+                }
+            }
 
-      const container = document.getElementById('listaCadastrados');
-      container.innerHTML = '';
+            // Salva os dados no Supabase
+            const { data, error } = await supabase.from('clientes').insert([
+                {
+                    nome: nome,
+                    cpf: cpf,
+                    fotos: fotosUrls,
+                },
+            ]);
 
-      if (data) {
-        data.forEach(item => {
-          const div = document.createElement('div');
-          div.textContent = `${item.nome} - ${item.cpf} (${item.fotos?.length || 0} fotos)`;
-          container.appendChild(div);
+            if (data) {
+                alert('Cadastro realizado com sucesso!');
+                loadLista();  // Recarrega a lista de registros após o cadastro
+            } else {
+                alert('Erro ao cadastrar: ' + error.message);
+            }
         });
-      }
-    }
 
-    function voltarInicio() {
-      window.location.href = 'index.html';
-    }
+        // Função para carregar a lista de registros
+        async function loadLista() {
+            const { data, error } = await supabase.from('clientes').select();
+            const lista = document.getElementById('lista-registros');
+            lista.innerHTML = '';
+            if (error) {
+                console.error('Erro ao carregar registros:', error.message);
+                return;
+            }
 
-    carregarLista();
-  </script>
+            data.forEach(cliente => {
+                const li = document.createElement('li');
+                li.textContent = `${cliente.nome} - ${cliente.cpf}`;
+                lista.appendChild(li);
+            });
+        }
+
+        loadLista();
+    </script>
 </body>
 </html>
