@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JB Formatura</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>Busca de Formandos</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Buscar Formando</h1>
-  <input type="text" id="searchInput" placeholder="Digite o nome ou CPF" />
-  <button onclick="searchFormando()">Buscar</button>
-
-  <div id="resultContainer"></div>
-
-  <a href="login.html">Acesso do Administrador</a>
-
+  <div class="container">
+    <h1>JB Formatura</h1>
+    <input type="text" id="searchInput" placeholder="Buscar por nome ou CPF" />
+    <div id="results"></div>
+    <a href="login.html">Acesso ao Painel</a>
+  </div>
   <script src="scripts.js"></script>
 </body>
 </html>
