@@ -43,17 +43,19 @@ function viewAlbum(cpf) {
 }
 
 // LOGIN
-function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+document.getElementById("login-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+  const email = document.getElementById("email").value;
+  const senha = document.getElementById("senha").value;
 
-    const validEmail = "admin@admin.com";
-    const validPassword = "senha123";
+  // Verifica se as credenciais estão corretas
+  if (email === "admin@admin.com" && senha === "senha123") {
+    window.location.href = "painel.html";
+  } else {
+    alert("E-mail ou senha inválidos.");
+  }
+});
 
-    if (email === validEmail && password === validPassword) {
-        window.location.href = "admin.html";
-    } else {
-        alert("Email ou senha inválidos.");
     }
 }
 
