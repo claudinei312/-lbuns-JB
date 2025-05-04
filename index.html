@@ -1,24 +1,82 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>JB Formatura</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      padding: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+    }
+    .person-entry {
+      background: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    img {
+      max-width: 100px;
+      margin: 5px;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
-  <h1>JB Formatura</h1>
-  <form id="buscaForm">
-    <input type="text" id="busca" placeholder="Buscar por nome ou CPF" />
-    <button type="submit">Buscar</button>
-  </form>
+  <h1>Visualizar Fotos - JB Formatura</h1>
+
+  <input type="text" id="busca" placeholder="Digite o nome ou CPF">
+  <button onclick="buscar()">Buscar</button>
+
   <div id="resultados"></div>
-  <div id="acoesCompra" style="display:none;">
-    <button onclick="comprar('digital')">Comprar Digital</button>
-    <button onclick="comprar('fisico')">Comprar Físico</button>
-    <p>O pagamento será realizado apenas após o recebimento do álbum.</p>
-  </div>
-  <script src="scripts.js"></script>
+
+  <script>
+    const formandos = JSON.parse(localStorage.getItem('formandos')) || [];
+
+    function buscar() {
+      const termo = document.getElementById('busca').value.toLowerCase();
+      const resultados = document.getElementById('resultados');
+      resultados.innerHTML = '';
+
+      const encontrados = formandos.filter(f =>
+        f.nome.toLowerCase().includes(termo) || f.cpf.includes(termo)
+      );
+
+      if (encontrados.length === 0) {
+        resultados.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+        return;
+      }
+
+      encontrados.forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'person-entry';
+        div.innerHTML = `
+          <strong>${f.nome}</strong><br>
+          CPF: ${f.cpf}<br>
+          <div>${f.fotos.map(src => `<img src="${src}" alt="Foto">`).join('')}</div>
+          <button onclick="comprar('${f.nome}', '${f.cpf}', 'digital')">Adquirir Álbum Digital (R$250,00)</button>
+          <button onclick="comprar('${f.nome}', '${f.cpf}', 'fisico')">Adquirir Álbum Físico (R$330,00)</button>
+          <button onclick="comprar('${f.nome}', '${f.cpf}', 'ambos')">Adquirir Ambos (R$470,00)</button>
+        `;
+        resultados.appendChild(div);
+      });
+    }
+
+    function comprar(nome, cpf, tipo) {
+      const preco = tipo === 'digital' ? 250 : tipo === 'fisico' ? 330 : 470;
+      const dados = prompt(`Preencha os dados para envio do álbum (nome completo e endereço):`);
+      if (dados) {
+        const compras = JSON.parse(localStorage.getItem('compras')) || [];
+        compras.push({ nome, cpf, tipo, preco, dados });
+        localStorage.setItem('compras', JSON.stringify(compras));
+        alert('Compra registrada com sucesso!');
+      }
+    }
+  </script>
 </body>
 </html>
