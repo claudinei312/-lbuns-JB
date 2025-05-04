@@ -3,48 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Formandos</title>
+    <title>Painel de Cadastro de Formandos</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Página de Login -->
-    <div id="loginForm">
+    <div id="login-container">
         <h2>Área Administrativa</h2>
-        <form>
-            <label for="code">Código de Acesso:</label>
-            <input type="text" id="code" name="code" required>
-            <button type="submit">Entrar</button>
-        </form>
+        <label for="codigo">Digite o código de acesso (1811):</label>
+        <input type="text" id="codigo" placeholder="Código de Acesso" />
+        <button onclick="verificarCodigo()">Entrar</button>
     </div>
 
-    <!-- Painel Administrativo -->
-    <div id="adminPanel" style="display: none;">
+    <div id="admin-container" style="display:none;">
         <h2>Painel de Cadastro de Formandos</h2>
-        <form id="formCadastro">
+        <form id="form-cadastro">
             <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required>
+            <input type="text" id="nome" required />
+            <br />
             <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" name="cpf" required>
-            <label for="foto">Fotos:</label>
-            <input type="file" id="foto" name="foto" accept="image/*" multiple required>
-            <button type="submit">Cadastrar</button>
+            <input type="text" id="cpf" required />
+            <br />
+            <label for="foto">Foto:</label>
+            <input type="file" id="foto" accept="image/*" required />
+            <br />
+            <button type="button" onclick="cadastrarFormando()">Cadastrar Formando</button>
         </form>
 
-        <h2>Formandos Cadastrados</h2>
-        <table id="tabelaCadastro">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Aqui serão exibidos os formandos -->
-            </tbody>
-        </table>
+        <h3>Formandos Cadastrados:</h3>
+        <ul id="formandos-list"></ul>
     </div>
 
-    <script src="scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
