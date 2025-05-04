@@ -1,26 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de Acesso</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login do Painel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      text-align: center;
+      padding: 50px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Digite o código de acesso</h2>
-    <input type="password" id="accessCode" placeholder="Código de 4 dígitos">
-    <button onclick="checkAccessCode()">Entrar</button>
-  </div>
-  <script>
-    function checkAccessCode() {
-      const code = document.getElementById('accessCode').value;
-      if (code === "1811") {
-        window.location.href = "admin.html";
-      } else {
-        alert("Código incorreto!");
-      }
-    }
-  </script>
+  <h2>Digite o código de acesso</h2>
+  <input type="password" id="codigoAcesso" placeholder="Ex: 1811" maxlength="4" />
+  <br />
+  <button onclick="verificarCodigo()">Entrar</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="scripts.js"></script>
 </body>
 </html>
