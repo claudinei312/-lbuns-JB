@@ -8,21 +8,27 @@
 </head>
 <body>
     <header>
-        <h1>Bem-vindo ao sistema de fotos de formatura</h1>
+        <h1>Bem-vindo ao Sistema de Fotos de Formatura</h1>
     </header>
 
-    <section id="access-section">
-        <h2>Acesso Administrativo</h2>
-        <input type="password" id="code" placeholder="Digite o código de acesso">
-        <button onclick="accessAdminPanel()">Acessar Painel</button>
-    </section>
+    <main>
+        <section id="access-section">
+            <h2>Acesso Administrativo</h2>
+            <input type="password" id="code" placeholder="Digite o código de acesso">
+            <button onclick="accessAdminPanel()">Acessar Painel</button>
+        </section>
 
-    <section id="search-section">
-        <h2>Buscar Formando</h2>
-        <input type="text" id="search-input" placeholder="Digite o nome ou CPF do formando">
-        <button onclick="search()">Buscar</button>
-        <div id="results"></div>
-    </section>
+        <section id="search-section">
+            <h2>Buscar Formando</h2>
+            <input type="text" id="search-input" placeholder="Digite o nome ou CPF do formando">
+            <button onclick="search()">Buscar</button>
+            <div id="results"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Sistema de Formatura. Todos os direitos reservados.</p>
+    </footer>
 
     <script src="scripts.js"></script>
 </body>
