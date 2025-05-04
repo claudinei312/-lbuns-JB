@@ -1,88 +1,69 @@
-// Função para verificar o código de acesso
-function verificarAcesso() {
-    const codigoAcesso = document.getElementById('codigoAcesso').value;
+const SUPABASE_URL = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
+const SUPABASE_KEY = 'sua_chave_anonima'; // Coloque sua chave anônima aqui
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    if (codigoAcesso === '1811') {
-        window.location.href = 'admin.html';  // Redireciona para o painel de admin
-    } else {
-        alert('Código de acesso inválido!');
-    }
-}
-
-// Função para cadastrar os dados do formando e foto
-function cadastrarFormando() {
+// Função para cadastrar formando
+async function cadastrarFormando() {
     const nome = document.getElementById('nome').value;
     const cpf = document.getElementById('cpf').value;
-    const fotos = document.getElementById('fotos').files;
+    const foto = document.getElementById('foto').files[0];
 
-    if (!nome || !cpf || fotos.length === 0) {
-        alert('Por favor, preencha todos os campos e adicione uma foto.');
+    // Carregar a foto para o Supabase Storage
+    const { data, error } = await supabase.storage
+        .from('fotos')
+        .upload(`formando-${nome}-${cpf}.jpg`, foto);
+
+    if (error) {
+        alert('Erro ao carregar a foto');
+        console.error(error);
         return;
     }
 
-    const formData = new FormData();
-    formData.append('nome', nome);
-    formData.append('cpf', cpf);
+    // Salvar dados do formando no Supabase Database
+    const { data: formandoData, error: dbError } = await supabase
+        .from('formandos')
+        .insert([
+            {
+                nome: nome,
+                cpf: cpf,
+                foto_url: data?.Key
+            }
+        ]);
 
-    for (let i = 0; i < fotos.length; i++) {
-        formData.append('fotos[]', fotos[i]);
+    if (dbError) {
+        alert('Erro ao cadastrar formando');
+        console.error(dbError);
+        return;
     }
 
-    fetch('cadastro.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Cadastro realizado com sucesso!');
-            listarFormandos();
-        } else {
-            alert('Erro ao cadastrar os dados.');
-        }
-    })
-    .catch(error => console.error('Erro:', error));
-}
-
-// Função para listar todos os formandos cadastrados
-function listarFormandos() {
-    fetch('listar.php')
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = '';  // Limpa a tabela antes de preencher
-
-            data.formandos.forEach(formando => {
-                const tr = document.createElement('tr');
-
-                const tdNome = document.createElement('td');
-                tdNome.textContent = formando.nome;
-
-                const tdCpf = document.createElement('td');
-                tdCpf.textContent = formando.cpf;
-
-                const tdFotos = document.createElement('td');
-                tdFotos.textContent = formando.fotos.length;
-
-                tr.appendChild(tdNome);
-                tr.appendChild(tdCpf);
-                tr.appendChild(tdFotos);
-
-                tableBody.appendChild(tr);
-            });
-        })
-        .catch(error => console.error('Erro ao listar formandos:', error));
-}
-
-// Função para retornar à página inicial
-function voltarInicio() {
-    window.location.href = 'index.html';
-}
-
-// Função para selecionar múltiplas fotos
-document.getElementById('fotos').setAttribute('multiple', 'true');
-
-// Chama a função para listar os formandos ao carregar o painel
-window.onload = function() {
+    alert('Formando cadastrado com sucesso!');
     listarFormandos();
-};
+}
+
+// Função para listar os formandos cadastrados
+async function listarFormandos() {
+    const { data: formandos, error } = await supabase
+        .from('formandos')
+        .select('nome, cpf, foto_url');
+
+    if (error) {
+        console.error('Erro ao listar formandos', error);
+        return;
+    }
+
+    const list = document.getElementById('formandos-list');
+    list.innerHTML = ''; // Limpar a lista atual
+
+    formandos.forEach(formando => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <strong>${formando.nome}</strong><br>
+            CPF: ${formando.cpf}<br>
+            <img src="https://cdstzbtewwbwjqhvhigy.supabase.co/storage/v1/object/public/fotos/${formando.foto_url}" alt="Foto do Formando" width="100"><br><br>
+        `;
+        list.appendChild(listItem);
+    });
+}
+
+// Chama a função listarFormandos ao carregar a página
+document.addEventListener('DOMContentLoaded', listarFormandos);
