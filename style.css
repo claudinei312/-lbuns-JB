@@ -1,69 +1,81 @@
+/* Resetando alguns estilos padrões */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Corpo da página */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     color: #333;
-    margin: 0;
-    padding: 0;
 }
 
-h2 {
+/* Estilo do formulário de login */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
-#loginForm {
-    width: 300px;
-    margin: 100px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.login-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
 }
 
-#loginForm input {
+.login-container label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #555;
+}
+
+.login-container input {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
+    margin-bottom: 20px;
+    border-radius: 5px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    font-size: 16px;
 }
 
-#loginForm button {
+.login-container button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background-color: #28a745;
     color: white;
     border: none;
     border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
 }
 
-#loginForm button:hover {
+.login-container button:hover {
     background-color: #218838;
 }
 
-#adminPanel {
-    width: 80%;
-    margin: 30px auto;
-    padding: 20px;
+/* Estilo para o painel administrativo */
+#resultados {
+    margin-top: 20px;
+}
+
+.pessoa {
+    margin-bottom: 15px;
+    padding: 10px;
     background-color: #fff;
     border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#formCadastro {
-    margin-bottom: 30px;
-}
-
-#formCadastro input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-#formCadastro button {
-    width: 100%;
+.pessoa button {
+    margin-top: 10px;
     padding: 10px;
     background-color: #007bff;
     color: white;
@@ -72,22 +84,25 @@ h2 {
     cursor: pointer;
 }
 
-#formCadastro button:hover {
+.pessoa button:hover {
     background-color: #0056b3;
 }
 
-#tabelaCadastro {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 30px;
+.pessoa img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 10px;
 }
 
-#tabelaCadastro th, #tabelaCadastro td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: center;
+.fotos-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-#tabelaCadastro th {
-    background-color: #f8f9fa;
+#fotosExibidas img {
+    max-width: 150px;
+    margin: 5px;
 }
