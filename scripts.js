@@ -20,7 +20,7 @@ function search() {
 
 async function fetchFromSupabase(query) {
     const supabaseUrl = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
-    const supabaseKey = 'YOUR_SUPABASE_KEY';
+    const supabaseKey = 'YOUR_SUPABASE_KEY'; // Substitua pela sua chave
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data, error } = await supabase
