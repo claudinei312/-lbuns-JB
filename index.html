@@ -1,20 +1,31 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>JB Formatura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site de Formatura</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Consulta de Fotos</h1>
+  <!-- Área de Acesso Administrativo -->
+  <div id="acessoArea" class="acesso">
+    <label for="codigoAcesso">Código de Acesso:</label>
+    <input type="text" id="codigoAcesso" placeholder="Digite o código de acesso">
+    <button id="btnAcesso" onclick="verificarAcesso()">Entrar</button>
+  </div>
 
-  <input type="text" id="busca" placeholder="Digite o nome ou CPF">
-  <button onclick="buscarFotos()">Buscar</button>
+  <!-- Formulário de Busca -->
+  <div class="busca-container">
+    <form id="formBusca">
+      <input type="text" id="busca" placeholder="Digite nome ou CPF para buscar">
+      <button type="submit">Buscar</button>
+    </form>
+  </div>
 
-  <div id="resultado"></div>
+  <!-- Resultados da Busca -->
+  <div id="resultadoBusca"></div>
 
-  <a href="admin.html" class="admin-link">Acessar Painel</a>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="scripts.js"></script>
 </body>
 </html>
