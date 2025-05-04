@@ -1,20 +1,37 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel de Cadastro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel Administrativo</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Cadastrar Formando</h1>
-    <input type="text" id="name" placeholder="Nome completo" />
-    <input type="text" id="cpf" placeholder="CPF" />
-    <input type="file" id="photo" accept="image/*" />
-    <button onclick="saveData()">Salvar</button>
-    <a href="index.html">Voltar</a>
+  <h1>Painel Administrativo</h1>
+  <form id="codigoAcessoForm">
+    <input type="text" id="codigo" placeholder="Digite o código de acesso" />
+    <button type="submit">Entrar</button>
+  </form>
+
+  <div id="painel" style="display:none;">
+    <h2>Cadastrar Formando</h2>
+    <form id="cadastroForm">
+      <input type="text" id="nome" placeholder="Nome" required />
+      <input type="text" id="cpf" placeholder="CPF" required />
+      <input type="file" id="foto" accept="image/*" multiple required />
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Lista de Formandos</h2>
+    <table id="listaFormandos">
+      <thead>
+        <tr><th>Nome</th><th>CPF</th><th>Fotos</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
+
   <script src="scripts.js"></script>
 </body>
 </html>
