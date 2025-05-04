@@ -3,20 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - Área Administrativa</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="login-container">
-        <h2>Área de Acesso</h2>
-        <form id="loginForm" onsubmit="event.preventDefault(); verificarAcesso();">
-            <label for="codigoAcesso">Código de Acesso (4 dígitos):</label>
-            <input type="text" id="codigoAcesso" placeholder="Digite o código" required>
-
-            <button type="submit">Entrar</button>
+        <h1>Acesso Administrativo</h1>
+        <form id="login-form">
+            <label for="codigo">Digite o código de acesso:</label>
+            <input type="text" id="codigo" name="codigo" required>
+            <button type="submit">Acessar</button>
         </form>
+        <p id="erro" style="color: red; display: none;">Código incorreto. Tente novamente.</p>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const codigo = document.getElementById('codigo').value;
+            const codigoCorreto = '1811';
+
+            if (codigo === codigoCorreto) {
+                window.location.href = 'admin.html'; // Redireciona para a página administrativa
+            } else {
+                document.getElementById('erro').style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
