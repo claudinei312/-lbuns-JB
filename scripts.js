@@ -8,21 +8,20 @@ const adminEmail = "admin@jbformatura.com";
 const adminSenha = "123456";
 
 // Função de login
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+function login(event) {
+  event.preventDefault();
 
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-      if (email === adminEmail && senha === adminSenha) {
-        localStorage.setItem("logado", "true");
-        window.location.href = "painel.html";
-      } else {
-        alert("Email ou senha incorretos.");
-      }
+  // Login fixo
+  if (email === "admin@jb.com" && password === "123456") {
+    window.location.href = "admin.html"; // Redireciona para o painel
+  } else {
+    alert("E-mail ou senha inválidos!");
+  }
+}
+
     });
   }
 
