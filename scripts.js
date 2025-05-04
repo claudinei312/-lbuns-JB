@@ -1,7 +1,7 @@
 // Função para verificar o código de acesso e redirecionar para o painel
 function accessAdminPanel() {
     const code = document.getElementById("code").value;
-    
+
     // Verificar se o código é o correto
     if (code === "1811") {
         window.location.href = "admin.html"; // Redireciona para o painel
@@ -14,37 +14,53 @@ function accessAdminPanel() {
 function search() {
     const searchQuery = document.getElementById("search-input").value;
 
-    // Aqui você pode integrar a busca com o Supabase ou outras fontes de dados.
-    // Por enquanto, vamos apenas simular uma busca simples:
+    // Conectar com Supabase para buscar dados
+    fetchFromSupabase(searchQuery);
+}
 
-    if (searchQuery.trim() !== "") {
-        // Simulação de resultados encontrados
-        const results = [
-            { name: "João Silva", cpf: "123.456.789-00" },
-            { name: "Maria Oliveira", cpf: "987.654.321-00" }
-        ];
+async function fetchFromSupabase(query) {
+    const supabaseUrl = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
+    const supabaseKey = 'YOUR_SUPABASE_KEY';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-        let resultHTML = "";
+    const { data, error } = await supabase
+        .from('formandos')
+        .select('name, cpf, photos')
+        .ilike('name', `%${query}%`)
+        .or(`cpf.eq.${query}`);
+
+    if (error) {
+        alert("Erro ao buscar dados.");
+        return;
+    }
+
+    displayResults(data);
+}
+
+function displayResults(results) {
+    let resultHTML = "";
+
+    if (results.length > 0) {
         results.forEach(person => {
             resultHTML += `
                 <div class="result">
                     <p><strong>${person.name}</strong></p>
                     <p>CPF: ${person.cpf}</p>
                     <button onclick="viewPhotos('${person.name}')">Ver Fotos</button>
+                    <button onclick="showAlbumOptions('${person.name}')">Escolher Álbuns</button>
                 </div>
             `;
         });
-
-        document.getElementById("results").innerHTML = resultHTML;
     } else {
-        alert("Por favor, insira um nome ou CPF.");
+        resultHTML = `<p>Nenhum resultado encontrado.</p>`;
     }
+
+    document.getElementById("results").innerHTML = resultHTML;
 }
 
-// Função para exibir as fotos (simulação)
-function viewPhotos(name) {
-    // Aqui você integraria a exibição das fotos do Supabase
-    alert(`Exibindo fotos de ${name}`);
+function viewPhotos(personName) {
+    // Função para exibir as fotos
+    alert(`Exibindo fotos de ${personName}`);
 }
 
 // Função para registrar a compra
@@ -82,9 +98,4 @@ function showAlbumOptions(personName) {
         </div>
     `;
     document.getElementById("results").innerHTML = optionsHTML;
-}
-
-// Exemplo de chamada para exibição de fotos (esta função deve ser conectada ao Supabase para exibir as fotos reais)
-function displayPhotosForPerson(personName) {
-    alert(`Exibindo fotos de ${personName}`);
 }
