@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Login - JB Formatura</title>
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Login do Administrador</h1>
-  <input type="email" id="email" placeholder="E-mail">
-  <input type="password" id="password" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
-  <p id="loginMessage"></p>
+  <h2>Login do Administrador</h2>
+  <form onsubmit="login(event)">
+    <input type="email" id="email" placeholder="E-mail" required />
+    <input type="password" id="password" placeholder="Senha" required />
+    <button type="submit">Entrar</button>
+  </form>
 
   <script src="scripts.js"></script>
 </body>
