@@ -69,6 +69,32 @@ async function salvarCompra(idFormando, tipoAlbum) {
     alert('Erro ao registrar a compra.');
     console.error(error);
   }
+  // Função para carregar e salvar fotos no Supabase Storage
+async function uploadFotos(fotos) {
+  const urlFotos = [];  // Cria um array vazio para armazenar as URLs das fotos
+
+  // Loop para fazer o upload de todas as fotos selecionadas
+  for (let i = 0; i < fotos.length; i++) {
+    const foto = fotos[i];  // A foto selecionada
+    const { data, error } = await supabase
+      .storage
+      .from('fotos')  // O bucket onde as fotos serão armazenadas
+      .upload(foto.name, foto);  // Upload da foto
+
+    // Se houver erro durante o upload, mostramos no console
+    if (error) {
+      console.error("Erro ao salvar foto:", error);
+      return;
+    }
+
+    // Após o upload, obtemos a URL pública da foto
+    const urlFoto = `${SUPABASE_URL}/storage/v1/object/public/fotos/${data.path}`;
+    urlFotos.push(urlFoto);  // Adiciona a URL ao array urlFotos
+  }
+
+  return urlFotos;  // Retorna o array com todas as URLs das fotos
+}
+  
 }
 
 // Acesso ao painel com código 1811
