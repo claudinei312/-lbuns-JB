@@ -33,7 +33,7 @@ async function cadastrarDados() {
       .insert([
         { nome, cpf }
       ]);
-    
+
     if (error) throw error;
 
     // Fazer upload das fotos
@@ -42,12 +42,12 @@ async function cadastrarDados() {
       const { data: fotoData, error: fotoError } = await supabase.storage
         .from('fotos')
         .upload(`fotos/${nome}_${cpf}_${i}`, foto);
-      
+
       if (fotoError) throw fotoError;
     }
 
     alert('Cadastro realizado com sucesso!');
-    mostrarResultados();
+    mostrarResultados(); // Atualiza a lista de formandos após o cadastro
 
   } catch (error) {
     console.error(error.message);
