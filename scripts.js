@@ -1,74 +1,88 @@
-const codeAccess = '1811';  // Código de acesso para painel
-let formandos = [];  // Armazenar dados dos formandos
+// Função para verificar o código de acesso
+function verificarAcesso() {
+    const codigoAcesso = document.getElementById('codigoAcesso').value;
 
-// Função para verificar o código e permitir acesso ao painel
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const inputCode = document.getElementById('code').value;
-
-    if (inputCode === codeAccess) {
-        document.getElementById('adminPanel').style.display = 'block';
-        document.getElementById('loginForm').style.display = 'none';
+    if (codigoAcesso === '1811') {
+        window.location.href = 'admin.html';  // Redireciona para o painel de admin
     } else {
-        alert('Código incorreto!');
+        alert('Código de acesso inválido!');
     }
-});
+}
 
-// Função para cadastrar novos formandos
-document.getElementById('formCadastro').addEventListener('submit', function(event) {
-    event.preventDefault();
-
+// Função para cadastrar os dados do formando e foto
+function cadastrarFormando() {
     const nome = document.getElementById('nome').value;
     const cpf = document.getElementById('cpf').value;
-    const fotos = document.getElementById('foto').files;
+    const fotos = document.getElementById('fotos').files;
 
-    if (nome && cpf && fotos.length > 0) {
-        const formand = {
-            nome: nome,
-            cpf: cpf,
-            fotos: Array.from(fotos).map(foto => URL.createObjectURL(foto))
-        };
-        formandos.push(formand);
-        atualizarTabela();
-
-        // Limpar campos após cadastro
-        document.getElementById('formCadastro').reset();
-    } else {
-        alert('Preencha todos os campos!');
+    if (!nome || !cpf || fotos.length === 0) {
+        alert('Por favor, preencha todos os campos e adicione uma foto.');
+        return;
     }
-});
 
-// Função para atualizar a tabela de formandos cadastrados
-function atualizarTabela() {
-    const tabelaBody = document.querySelector('#tabelaCadastro tbody');
-    tabelaBody.innerHTML = '';
+    const formData = new FormData();
+    formData.append('nome', nome);
+    formData.append('cpf', cpf);
 
-    formandos.forEach(formand => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${formand.nome}</td>
-            <td>${formand.cpf}</td>
-            <td><button onclick="exibirFotos('${formand.nome}')">Ver Fotos</button></td>
-            <td><button onclick="deletarFormando('${formand.cpf}')">Deletar</button></td>
-        `;
-        tabelaBody.appendChild(row);
-    });
-}
-
-// Função para exibir as fotos do formando
-function exibirFotos(nome) {
-    const formando = formandos.find(f => f.nome === nome);
-    if (formando) {
-        let imagens = '<h3>Fotos:</h3>';
-        formando.fotos.forEach(foto => {
-            imagens += `<img src="${foto}" alt="Foto do formando" width="100"><br>`;
-        });
-        alert(imagens);
+    for (let i = 0; i < fotos.length; i++) {
+        formData.append('fotos[]', fotos[i]);
     }
+
+    fetch('cadastro.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Cadastro realizado com sucesso!');
+            listarFormandos();
+        } else {
+            alert('Erro ao cadastrar os dados.');
+        }
+    })
+    .catch(error => console.error('Erro:', error));
 }
 
-// Função para deletar um formando
-function deletarFormando(cpf) {
-    formandos = formandos.filter(f => f.cpf !== cpf);
-    atualizarTabela();
+// Função para listar todos os formandos cadastrados
+function listarFormandos() {
+    fetch('listar.php')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';  // Limpa a tabela antes de preencher
+
+            data.formandos.forEach(formando => {
+                const tr = document.createElement('tr');
+
+                const tdNome = document.createElement('td');
+                tdNome.textContent = formando.nome;
+
+                const tdCpf = document.createElement('td');
+                tdCpf.textContent = formando.cpf;
+
+                const tdFotos = document.createElement('td');
+                tdFotos.textContent = formando.fotos.length;
+
+                tr.appendChild(tdNome);
+                tr.appendChild(tdCpf);
+                tr.appendChild(tdFotos);
+
+                tableBody.appendChild(tr);
+            });
+        })
+        .catch(error => console.error('Erro ao listar formandos:', error));
 }
+
+// Função para retornar à página inicial
+function voltarInicio() {
+    window.location.href = 'index.html';
+}
+
+// Função para selecionar múltiplas fotos
+document.getElementById('fotos').setAttribute('multiple', 'true');
+
+// Chama a função para listar os formandos ao carregar o painel
+window.onload = function() {
+    listarFormandos();
+};
