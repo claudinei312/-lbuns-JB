@@ -2,26 +2,19 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Login - Painel Admin</title>
+  <title>JB Formatura</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="login-container">
-    <h2>Digite o código de acesso</h2>
-    <input type="password" id="codigoAcesso" placeholder="Código de 4 dígitos">
-    <button onclick="verificarCodigo()">Acessar Painel</button>
-    <p id="mensagemErro" style="color:red;"></p>
-  </div>
+  <h1>Consulta de Fotos</h1>
 
-  <script>
-    function verificarCodigo() {
-      const codigo = document.getElementById('codigoAcesso').value;
-      if (codigo === "1811") {
-        window.location.href = "admin.html";
-      } else {
-        document.getElementById('mensagemErro').textContent = "Código incorreto. Tente novamente.";
-      }
-    }
-  </script>
+  <input type="text" id="busca" placeholder="Digite o nome ou CPF">
+  <button onclick="buscarFotos()">Buscar</button>
+
+  <div id="resultado"></div>
+
+  <a href="admin.html" class="admin-link">Acessar Painel</a>
+
+  <script src="scripts.js"></script>
 </body>
 </html>
