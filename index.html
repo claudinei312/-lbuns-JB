@@ -7,16 +7,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Formulário de Login para Acesso ao Painel -->
-    <div id="login-container" style="text-align: center;">
+    <div id="login-container">
         <h2>Área Administrativa</h2>
         <label for="code">Código de Acesso (4 dígitos):</label>
-        <input type="text" id="code" maxlength="4" placeholder="Digite o código" />
+        <input type="password" id="code" maxlength="4" placeholder="Digite o código" />
         <button onclick="accessAdminPanel()">Acessar Painel</button>
     </div>
 
-    <!-- Barra de Busca -->
-    <div id="search-container" style="text-align: center;">
+    <div id="search-container">
         <h2>Buscar Formandos</h2>
         <input type="text" id="search-input" placeholder="Digite o nome ou CPF para buscar" />
         <button onclick="search()">Buscar</button>
