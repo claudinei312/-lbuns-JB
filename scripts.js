@@ -1,136 +1,110 @@
-// URL e chave do Supabase
+// Supabase config
 const supabaseUrl = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
-const supabaseKey = 'your_supabase_key'; // substitua com a chave correta
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // substitua pela sua chave pública
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Função para verificar o código de acesso
-function verificarAcesso() {
-  const codigoAcesso = document.getElementById('codigoAcesso').value;
-  const codigoCorreto = '1811'; // código de acesso
-  if (codigoAcesso === codigoCorreto) {
-    window.location.href = "admin.html"; // Redirecionar para o painel
+// Verificação de código do painel
+function verificarCodigo() {
+  const codigo = document.getElementById('codigoAcesso').value;
+  if (codigo === '1811') {
+    document.getElementById('loginPainel').style.display = 'none';
+    document.getElementById('areaCadastro').style.display = 'block';
+    carregarCadastros();
   } else {
-    alert('Código de acesso incorreto');
+    alert('Código incorreto!');
   }
 }
 
-// Função para cadastrar dados e fotos
-async function cadastrarDados() {
+// Cadastro de fotos
+document.getElementById('formCadastro')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
   const nome = document.getElementById('nome').value;
   const cpf = document.getElementById('cpf').value;
   const fotos = document.getElementById('fotos').files;
 
-  // Verificar se as informações foram preenchidas
-  if (!nome || !cpf || fotos.length === 0) {
-    alert('Por favor, preencha todos os campos e selecione pelo menos uma foto.');
-    return;
-  }
-
-  try {
-    // Salvar os dados no banco de dados
-    const { data, error } = await supabase
-      .from('formandos')
-      .insert([
-        { nome, cpf }
-      ]);
-    
-    if (error) throw error;
-
-    // Fazer upload das fotos
-    for (let i = 0; i < fotos.length; i++) {
-      const foto = fotos[i];
-      const { data: fotoData, error: fotoError } = await supabase.storage
-        .from('fotos')
-        .upload(`fotos/${nome}_${cpf}_${i}`, foto);
-      
-      if (fotoError) throw fotoError;
+  const urls = [];
+  for (const file of fotos) {
+    const filePath = `${cpf}/${file.name}`;
+    const { data, error } = await supabase.storage.from('fotos').upload(filePath, file);
+    if (!error) {
+      const { data: urlData } = supabase.storage.from('fotos').getPublicUrl(filePath);
+      urls.push(urlData.publicUrl);
     }
-
-    alert('Cadastro realizado com sucesso!');
-    mostrarResultados();
-
-  } catch (error) {
-    console.error(error.message);
-    alert('Erro ao salvar os dados ou fotos.');
-  }
-}
-
-// Função para mostrar os dados após cadastro
-async function mostrarResultados() {
-  const { data, error } = await supabase
-    .from('formandos')
-    .select('*');
-
-  if (error) {
-    console.error(error.message);
-    return;
   }
 
-  let resultadosHtml = '';
-  for (let i = 0; i < data.length; i++) {
-    const formando = data[i];
-    resultadosHtml += `
-      <div>
-        <h3>${formando.nome} - CPF: ${formando.cpf}</h3>
-        <button onclick="visualizarFotos('${formando.nome}', '${formando.cpf}')">Ver Fotos</button>
-      </div>
-    `;
+  const { error: insertError } = await supabase.from('formandos').insert([{ nome, cpf, fotos: urls }]);
+  if (insertError) {
+    alert('Erro ao salvar cadastro.');
+  } else {
+    alert('Cadastro realizado!');
+    document.getElementById('formCadastro').reset();
+    carregarCadastros();
   }
-  document.getElementById('resultadoBusca').innerHTML = resultadosHtml;
-}
-
-// Função para exibir as fotos associadas ao nome e CPF
-async function visualizarFotos(nome, cpf) {
-  const { data, error } = await supabase
-    .storage
-    .from('fotos')
-    .list(`fotos/${nome}_${cpf}`);
-
-  if (error) {
-    console.error(error.message);
-    return;
-  }
-
-  let fotosHtml = '';
-  for (let i = 0; i < data.length; i++) {
-    const foto = data[i];
-    const fotoUrl = supabase.storage.from('fotos').getPublicUrl(foto.name).publicURL;
-    fotosHtml += `
-      <img src="${fotoUrl}" alt="${nome}" style="width: 100px; height: 100px;">
-    `;
-  }
-
-  document.getElementById('resultadoBusca').innerHTML = fotosHtml;
-}
-
-// Função de busca
-document.getElementById('formBusca').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const termoBusca = document.getElementById('busca').value;
-
-  if (!termoBusca) return;
-
-  const { data, error } = await supabase
-    .from('formandos')
-    .select('*')
-    .ilike('nome', `%${termoBusca}%`)
-    .or(`cpf.eq.${termoBusca}`);
-
-  if (error) {
-    console.error(error.message);
-    return;
-  }
-
-  let resultadosHtml = '';
-  for (let i = 0; i < data.length; i++) {
-    const formando = data[i];
-    resultadosHtml += `
-      <div>
-        <h3>${formando.nome} - CPF: ${formando.cpf}</h3>
-        <button onclick="visualizarFotos('${formando.nome}', '${formando.cpf}')">Ver Fotos</button>
-      </div>
-    `;
-  }
-  document.getElementById('resultadoBusca').innerHTML = resultadosHtml;
 });
+
+// Carregar registros no painel
+async function carregarCadastros() {
+  const container = document.getElementById('listaCadastros');
+  if (!container) return;
+  container.innerHTML = '';
+  const { data, error } = await supabase.from('formandos').select('*');
+  if (data) {
+    data.forEach((item) => {
+      const div = document.createElement('div');
+      div.innerHTML = `<strong>${item.nome}</strong> - CPF: ${item.cpf} - Fotos: ${item.fotos.length}`;
+      container.appendChild(div);
+    });
+  }
+}
+
+// Busca na página inicial
+document.getElementById('formBusca')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const termo = document.getElementById('busca').value.trim().toLowerCase();
+  const { data } = await supabase.from('formandos').select('*');
+  const resultados = data.filter(f => f.nome.toLowerCase().includes(termo) || f.cpf.includes(termo));
+
+  const container = document.getElementById('resultadoBusca');
+  container.innerHTML = '';
+
+  if (resultados.length === 0) {
+    container.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+    return;
+  }
+
+  resultados.forEach(formando => {
+    const div = document.createElement('div');
+    div.innerHTML = `<h3>${formando.nome} - CPF: ${formando.cpf}</h3>`;
+    
+    formando.fotos.forEach((url, i) => {
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = `Foto ${i + 1}`;
+      img.style.maxWidth = '150px';
+      div.appendChild(img);
+    });
+
+    const btns = document.createElement('div');
+    btns.innerHTML = `
+      <button onclick="iniciarCompra('${formando.nome}', '${formando.cpf}', 'Digital', 250)">Adquirir álbum digital - R$250</button>
+      <button onclick="iniciarCompra('${formando.nome}', '${formando.cpf}', 'Físico', 330)">Adquirir álbum físico - R$330</button>
+      <button onclick="iniciarCompra('${formando.nome}', '${formando.cpf}', 'Ambos', 470)">Adquirir ambos - R$470</button>
+    `;
+    div.appendChild(btns);
+    container.appendChild(div);
+  });
+});
+
+// Início da compra
+function iniciarCompra(nome, cpf, tipo, valor) {
+  const dados = prompt(`Preencha seus dados para concluir a compra de álbum ${tipo} (R$${valor})\n\nDigite nome completo e endereço:`);
+  if (dados) {
+    registrarCompra(nome, cpf, tipo, valor, dados);
+    alert('Dados recebidos! O pagamento será feito após o envio do álbum.');
+  }
+}
+
+// Registro da compra no Supabase
+async function registrarCompra(nome, cpf, tipo, valor, dadosContato) {
+  await supabase.from('compras').insert([{ nome, cpf, tipo, valor, dados: dadosContato }]);
+}
