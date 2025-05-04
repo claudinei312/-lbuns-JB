@@ -1,84 +1,97 @@
-
-const supabaseUrl = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-document.getElementById('codigoAcessoForm')?.addEventListener('submit', function(e) {
-  e.preventDefault();
-  const codigo = document.getElementById('codigo').value;
-  if (codigo === '1811') {
-    document.getElementById('painel').style.display = 'block';
-    this.style.display = 'none';
-    carregarListaFormandos();
+// Acesso ao painel com código de 4 dígitos
+function checkAccessCode() {
+  const code = document.getElementById('access-code').value;
+  if (code === '1811') {
+    document.getElementById('login-area').classList.add('hidden');
+    document.getElementById('admin-area').classList.remove('hidden');
+    carregarFormandos();
+    carregarCompras();
   } else {
-    alert('Código incorreto!');
+    document.getElementById('login-error').innerText = 'Código incorreto.';
   }
-});
-
-document.getElementById('cadastroForm')?.addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const nome = document.getElementById('nome').value;
-  const cpf = document.getElementById('cpf').value;
-  const fotos = document.getElementById('foto').files;
-  const urls = [];
-
-  for (let foto of fotos) {
-    const { data, error } = await supabase.storage.from('fotos').upload(`fotos/${Date.now()}_${foto.name}`, foto);
-    if (data) {
-      const url = supabase.storage.from('fotos').getPublicUrl(data.path).data.publicUrl;
-      urls.push(url);
-    }
-  }
-
-  await supabase.from('formandos').insert([{ nome, cpf, fotos: urls }]);
-  alert('Cadastro realizado com sucesso!');
-  document.getElementById('cadastroForm').reset();
-  carregarListaFormandos();
-});
-
-document.getElementById('buscaForm')?.addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const busca = document.getElementById('busca').value.trim();
-  const { data, error } = await supabase.from('formandos').select('*');
-  const resultado = data.find(item => item.nome === busca || item.cpf === busca);
-
-  const container = document.getElementById('resultados');
-  container.innerHTML = '';
-  document.getElementById('acoesCompra').style.display = 'none';
-
-  if (resultado) {
-    const titulo = document.createElement('h3');
-    titulo.textContent = `${resultado.nome} - ${resultado.cpf}`;
-    container.appendChild(titulo);
-
-    resultado.fotos?.forEach(url => {
-      const wrapper = document.createElement('div');
-      wrapper.innerHTML = `<input type="checkbox" class="selecionar-foto" value="${url}"><img src="${url}" width="150" />`;
-      container.appendChild(wrapper);
-    });
-
-    if (resultado.fotos?.length) {
-      document.getElementById('acoesCompra').style.display = 'block';
-    }
-  } else {
-    container.textContent = 'Nenhum resultado encontrado.';
-  }
-});
-
-function comprar(tipo) {
-  const selecionadas = document.querySelectorAll('.selecionar-foto:checked');
-  if (selecionadas.length === 0) return alert('Selecione ao menos uma foto.');
-  const urls = Array.from(selecionadas).map(el => el.value);
-  alert(`Você escolheu comprar o álbum ${tipo} com ${urls.length} fotos. O pagamento será realizado apenas após o recebimento do álbum.`);
 }
 
-async function carregarListaFormandos() {
-  const { data, error } = await supabase.from('formandos').select('*');
-  const tabela = document.querySelector('#listaFormandos tbody');
-  tabela.innerHTML = '';
-  data.forEach(item => {
-    const linha = document.createElement('tr');
-    linha.innerHTML = `<td>${item.nome}</td><td>${item.cpf}</td><td>${item.fotos?.length || 0}</td>`;
-    tabela.appendChild(linha);
+// Armazenamento local de dados
+let formandos = JSON.parse(localStorage.getItem('formandos')) || [];
+let compras = JSON.parse(localStorage.getItem('compras')) || [];
+
+function salvarCadastro() {
+  const nome = document.getElementById('nome').value.trim();
+  const cpf = document.getElementById('cpf').value.trim();
+  const fotosInput = document.getElementById('fotos');
+
+  if (!nome || !cpf || fotosInput.files.length === 0) {
+    alert('Preencha todos os campos e adicione pelo menos uma foto.');
+    return;
+  }
+
+  const fotos = [];
+  for (let file of fotosInput.files) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      fotos.push(e.target.result);
+      if (fotos.length === fotosInput.files.length) {
+        formandos.push({ nome, cpf, fotos });
+        localStorage.setItem('formandos', JSON.stringify(formandos));
+        alert('Cadastro salvo com sucesso!');
+        document.getElementById('nome').value = '';
+        document.getElementById('cpf').value = '';
+        document.getElementById('fotos').value = '';
+        carregarFormandos();
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function carregarFormandos() {
+  const container = document.getElementById('lista-formandos');
+  container.innerHTML = '';
+  formandos.forEach((f, index) => {
+    const div = document.createElement('div');
+    div.className = 'person-entry';
+    div.innerHTML = `
+      <strong>${f.nome}</strong><br>
+      CPF: ${f.cpf}<br>
+      Fotos: ${f.fotos.length}<br><br>
+      <div>${f.fotos.map((src, i) => `
+        <input type="checkbox" id="foto-${index}-${i}">
+        <img src="${src}" width="100" style="margin:5px">
+      `).join('')}</div>
+      <br>
+      <button onclick="comprar('${f.nome}', '${f.cpf}', 'digital')">Adquirir Álbum Digital (R$250,00)</button>
+      <button onclick="comprar('${f.nome}', '${f.cpf}', 'fisico')">Adquirir Álbum Físico (R$330,00)</button>
+      <button onclick="comprar('${f.nome}', '${f.cpf}', 'ambos')">Adquirir Ambos (R$470,00)</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function comprar(nome, cpf, tipo) {
+  const preco = tipo === 'digital' ? 250 :
+                tipo === 'fisico' ? 330 : 470;
+  const dados = prompt(`Preencha os dados para envio do álbum (nome completo e endereço):`);
+  if (dados) {
+    compras.push({ nome, cpf, tipo, preco, dados });
+    localStorage.setItem('compras', JSON.stringify(compras));
+    alert('Compra registrada! Envio será feito após a entrega do álbum.');
+    carregarCompras();
+  }
+}
+
+function carregarCompras() {
+  const container = document.getElementById('compras-registradas');
+  container.innerHTML = '';
+  compras.forEach((c) => {
+    const div = document.createElement('div');
+    div.className = 'person-entry';
+    div.innerHTML = `
+      <strong>${c.nome}</strong><br>
+      CPF: ${c.cpf}<br>
+      Tipo: ${c.tipo.toUpperCase()}<br>
+      Valor: R$${c.preco},00<br>
+      Dados: ${c.dados}
+    `;
+    container.appendChild(div);
   });
 }
