@@ -1,25 +1,74 @@
 body {
   font-family: Arial, sans-serif;
-  background: #fff;
-  color: #000;
+  background-color: #f5f5f5;
   margin: 0;
   padding: 0;
 }
-.container {
-  max-width: 600px;
-  margin: 30px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+
+header {
+  background-color: #000;
+  color: #fff;
+  padding: 1rem;
   text-align: center;
 }
-input, button {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
+
+header a {
+  color: #fff;
+  margin-left: 1rem;
+  text-decoration: underline;
 }
-#results img {
-  max-width: 100%;
-  margin-top: 10px;
+
+main {
+  padding: 2rem;
+}
+
+section.busca,
+section.cadastro {
+  margin-bottom: 2rem;
+}
+
+input, button, select {
+  padding: 0.5rem;
+  margin: 0.3rem 0;
+  width: 100%;
+  max-width: 400px;
+}
+
+button {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #333;
+}
+
+.resultado {
+  margin-top: 2rem;
+}
+
+.foto-preview {
+  max-width: 300px;
+  display: block;
+  margin-top: 1rem;
+}
+
+.fotos-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.foto-card {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  background: #fff;
+  max-width: 200px;
+}
+
+.selecionar-checkbox {
+  margin-top: 0.5rem;
 }
