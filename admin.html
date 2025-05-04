@@ -2,16 +2,18 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Login - JB Formatura</title>
+  <title>Painel - JB Formatura</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Login do Administrador</h2>
-  <form id="login-form">
-    <input type="email" id="email" placeholder="E-mail" required>
-    <input type="password" id="senha" placeholder="Senha" required>
-    <button type="submit">Entrar</button>
-  </form>
+  <h1>Cadastrar Formando</h1>
+  <input type="text" id="nome" placeholder="Nome completo">
+  <input type="text" id="cpf" placeholder="CPF">
+  <input type="file" id="foto" accept="image/*">
+  <button onclick="cadastrarFormando()">Cadastrar</button>
+
+  <h2>Formandos Cadastrados</h2>
+  <div id="listaFormandos"></div>
 
   <script src="scripts.js"></script>
 </body>
