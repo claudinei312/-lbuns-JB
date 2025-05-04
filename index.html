@@ -1,27 +1,126 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>JB Formatura - Busca</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>JB Formatura</title>
+  <style>
+    body { font-family: Arial; background: #fff; padding: 20px; text-align: center; }
+    input, button { padding: 10px; margin: 10px; }
+    img { max-width: 200px; margin: 5px; border: 2px solid #000; }
+    .escondido { display: none; }
+    label { display: block; margin-top: 10px; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>JB Formatura</h1>
-    <input type="text" id="busca" placeholder="Digite seu nome ou CPF" />
-    <button onclick="buscarFotos()">Buscar</button>
-    <div id="resultados"></div>
-    <div id="formularioCompra" style="display: none;">
-      <h3>Preencha seus dados para adquirir o álbum</h3>
-      <input type="text" id="nomeComprador" placeholder="Seu nome completo" required />
-      <input type="text" id="cpfComprador" placeholder="Seu CPF" required />
-      <input type="text" id="endereco" placeholder="Seu endereço completo" required />
-      <input type="text" id="contato" placeholder="Telefone ou e-mail" required />
-      <button onclick="finalizarCompra()">Finalizar Pedido</button>
-    </div>
+  <h1>Bem-vindo à JB Formatura</h1>
+
+  <input type="text" id="busca" placeholder="Digite seu nome ou CPF">
+  <button onclick="buscar()">Buscar</button>
+
+  <div id="resultado" class="escondido">
+    <h2 id="tituloPessoa"></h2>
+    <div id="fotos"></div>
+
+    <h3>Selecione o tipo de álbum:</h3>
+    <button onclick="comprar('digital')">Adquirir álbum digital - R$250,00</button>
+    <button onclick="comprar('fisico')">Adquirir álbum físico - R$330,00</button>
+    <button onclick="comprar('ambos')">Adquirir ambos - R$470,00</button>
   </div>
 
+  <div id="formCompra" class="escondido">
+    <h3>Preencha seus dados</h3>
+    <input id="nomeCompleto" placeholder="Nome completo">
+    <input id="cpfCompleto" placeholder="CPF">
+    <input id="endereco" placeholder="Endereço completo">
+    <input id="contato" placeholder="Telefone ou email para contato">
+    <button onclick="finalizarCompra()">Finalizar Pedido</button>
+    <p>Pagamento somente após o recebimento do álbum.</p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="scripts.js"></script>
+  <script>
+    let fotosSelecionadas = [];
+    let dadosPessoa = null;
+    let tipoCompra = '';
+    let valorCompra = 0;
+
+    async function buscar() {
+      const termo = document.getElementById('busca').value.trim();
+      const { data, error } = await supabase
+        .from('formandos')
+        .select('*')
+        .or(`nome.ilike.%${termo}%,cpf.ilike.%${termo}%`);
+
+      if (error || data.length === 0) {
+        alert('Nenhum resultado encontrado.');
+        return;
+      }
+
+      dadosPessoa = data[0];
+      document.getElementById('tituloPessoa').textContent = `${dadosPessoa.nome} - CPF: ${dadosPessoa.cpf}`;
+      const divFotos = document.getElementById('fotos');
+      divFotos.innerHTML = '';
+
+      dadosPessoa.fotos.forEach((url, i) => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = url;
+        checkbox.name = 'fotoSelecionada';
+
+        const img = document.createElement('img');
+        img.src = url;
+
+        const label = document.createElement('label');
+        label.appendChild(checkbox);
+        label.appendChild(img);
+
+        divFotos.appendChild(label);
+      });
+
+      document.getElementById('resultado').classList.remove('escondido');
+    }
+
+    function comprar(tipo) {
+      tipoCompra = tipo;
+
+      if (tipo === 'digital') valorCompra = 250;
+      else if (tipo === 'fisico') valorCompra = 330;
+      else valorCompra = 470;
+
+      document.getElementById('formCompra').classList.remove('escondido');
+    }
+
+    async function finalizarCompra() {
+      const nome = document.getElementById('nomeCompleto').value.trim();
+      const cpf = document.getElementById('cpfCompleto').value.trim();
+      const endereco = document.getElementById('endereco').value.trim();
+      const contato = document.getElementById('contato').value.trim();
+
+      fotosSelecionadas = Array.from(document.querySelectorAll('input[name="fotoSelecionada"]:checked')).map(e => e.value);
+
+      if (!nome || !cpf || !endereco || !contato || fotosSelecionadas.length === 0) {
+        alert('Preencha todos os campos e selecione pelo menos uma foto.');
+        return;
+      }
+
+      const { error } = await supabase.from('compras').insert([{
+        nome,
+        cpf,
+        endereco,
+        contato,
+        tipo: tipoCompra,
+        valor: valorCompra,
+        fotos: fotosSelecionadas
+      }]);
+
+      if (error) {
+        alert('Erro ao registrar compra.');
+      } else {
+        alert('Pedido realizado com sucesso!');
+        location.reload();
+      }
+    }
+  </script>
 </body>
 </html>
