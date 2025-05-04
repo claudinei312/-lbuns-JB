@@ -1,35 +1,27 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Área Administrativa</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Login - Painel Admin</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="login-container">
-        <h1>Acesso Administrativo</h1>
-        <form id="login-form">
-            <label for="codigo">Digite o código de acesso:</label>
-            <input type="text" id="codigo" name="codigo" required>
-            <button type="submit">Acessar</button>
-        </form>
-        <p id="erro" style="color: red; display: none;">Código incorreto. Tente novamente.</p>
-    </div>
+  <div class="login-container">
+    <h2>Digite o código de acesso</h2>
+    <input type="password" id="codigoAcesso" placeholder="Código de 4 dígitos">
+    <button onclick="verificarCodigo()">Acessar Painel</button>
+    <p id="mensagemErro" style="color:red;"></p>
+  </div>
 
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const codigo = document.getElementById('codigo').value;
-            const codigoCorreto = '1811';
-
-            if (codigo === codigoCorreto) {
-                window.location.href = 'admin.html'; // Redireciona para a página administrativa
-            } else {
-                document.getElementById('erro').style.display = 'block';
-            }
-        });
-    </script>
+  <script>
+    function verificarCodigo() {
+      const codigo = document.getElementById('codigoAcesso').value;
+      if (codigo === "1811") {
+        window.location.href = "admin.html";
+      } else {
+        document.getElementById('mensagemErro').textContent = "Código incorreto. Tente novamente.";
+      }
+    }
+  </script>
 </body>
 </html>
