@@ -3,19 +3,36 @@ const supabaseUrl = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // Substitua pela sua chave completa
 const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Login fixo
-const credenciais = {
-  email: 'admin@jbformatura.com',
-  senha: '123456'
-};
+// Dados de acesso fixos
+const adminEmail = "admin@jbformatura.com";
+const adminSenha = "123456";
 
-function login() {
-  const email = document.getElementById('email').value;
-  const senha = document.getElementById('password').value;
-  if (email === credenciais.email && senha === credenciais.senha) {
-    window.location.href = "painel.html";
-  } else {
-    document.getElementById('loginMessage').innerText = "Credenciais inválidas.";
+// Função de login
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+
+      if (email === adminEmail && senha === adminSenha) {
+        localStorage.setItem("logado", "true");
+        window.location.href = "painel.html";
+      } else {
+        alert("Email ou senha incorretos.");
+      }
+    });
+  }
+
+  // Verifica se está logado ao acessar painel.html
+  const emPainel = window.location.pathname.includes("painel.html");
+  if (emPainel && localStorage.getItem("logado") !== "true") {
+    window.location.href = "login.html";
+  }
+});
+
   }
 }
 
