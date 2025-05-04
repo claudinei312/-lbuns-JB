@@ -1,35 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formatura - Página Inicial</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Login - Painel Admin</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Bem-vindo ao Sistema de Fotos de Formatura</h1>
-    </header>
+  <div class="login-container">
+    <h2>Digite o código de acesso</h2>
+    <input type="password" id="codigoAcesso" placeholder="Código de 4 dígitos">
+    <button onclick="verificarCodigo()">Acessar Painel</button>
+    <p id="mensagemErro" style="color:red;"></p>
+  </div>
 
-    <main>
-        <section id="access-section">
-            <h2>Acesso Administrativo</h2>
-            <input type="password" id="code" placeholder="Digite o código de acesso">
-            <button onclick="accessAdminPanel()">Acessar Painel</button>
-        </section>
-
-        <section id="search-section">
-            <h2>Buscar Formando</h2>
-            <input type="text" id="search-input" placeholder="Digite o nome ou CPF do formando">
-            <button onclick="search()">Buscar</button>
-            <div id="results"></div>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 Sistema de Formatura. Todos os direitos reservados.</p>
-    </footer>
-
-    <script src="scripts.js"></script>
+  <script>
+    function verificarCodigo() {
+      const codigo = document.getElementById('codigoAcesso').value;
+      if (codigo === "1811") {
+        window.location.href = "admin.html";
+      } else {
+        document.getElementById('mensagemErro').textContent = "Código incorreto. Tente novamente.";
+      }
+    }
+  </script>
 </body>
 </html>
