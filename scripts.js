@@ -15,7 +15,7 @@ function login(event) {
   const password = document.getElementById("password").value;
 
   // Login fixo
-  if (email === "admin@jb.com" && password === "123456") {
+  if (email === "admin" && password === "admin") {
     window.location.href = "admin.html"; // Redireciona para o painel
   } else {
     alert("E-mail ou senha inválidos!");
