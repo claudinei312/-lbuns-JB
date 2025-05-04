@@ -1,35 +1,65 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Painel Administrativo</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+    }
+    .login-area, .admin-area {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    h2 {
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+    .person-entry {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 10px;
+      background: #eee;
+    }
+  </style>
 </head>
 <body>
-  <h1>Painel Administrativo</h1>
-  <form id="codigoAcessoForm">
-    <input type="text" id="codigo" placeholder="Digite o código de acesso" />
-    <button type="submit">Entrar</button>
-  </form>
+  <div class="login-area" id="login-area">
+    <h2>Digite o código de acesso</h2>
+    <input type="password" id="access-code" placeholder="Código de 4 dígitos"/>
+    <button onclick="checkAccessCode()">Entrar</button>
+    <p id="login-error" style="color:red;"></p>
+  </div>
 
-  <div id="painel" style="display:none;">
-    <h2>Cadastrar Formando</h2>
-    <form id="cadastroForm">
-      <input type="text" id="nome" placeholder="Nome" required />
-      <input type="text" id="cpf" placeholder="CPF" required />
-      <input type="file" id="foto" accept="image/*" multiple required />
-      <button type="submit">Cadastrar</button>
-    </form>
+  <div class="admin-area hidden" id="admin-area">
+    <h2>Painel Administrativo</h2>
+    
+    <div id="cadastro-form">
+      <h3>Cadastrar Formando</h3>
+      <input type="text" id="nome" placeholder="Nome completo"/>
+      <input type="text" id="cpf" placeholder="CPF"/>
+      <input type="file" id="fotos" multiple accept="image/*"/>
+      <button onclick="salvarCadastro()">Salvar Cadastro</button>
+    </div>
 
-    <h2>Lista de Formandos</h2>
-    <table id="listaFormandos">
-      <thead>
-        <tr><th>Nome</th><th>CPF</th><th>Fotos</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <h3>Lista de Formandos</h3>
+    <div id="lista-formandos"></div>
+
+    <h3>Compras Realizadas</h3>
+    <div id="compras-registradas"></div>
   </div>
 
   <script src="scripts.js"></script>
