@@ -69,9 +69,31 @@ async function salvarCompra(idFormando, tipoAlbum) {
     alert('Erro ao registrar a compra.');
     console.error(error);
   }
-  // Função para carregar e salvar fotos no Supabase Storage
-async function uploadFotos(fotos) {
-  const urlFotos = [];  // Cria um array vazio para armazenar as URLs das fotos
+
+// Função para cadastrar dados no Supabase (nome, CPF e fotos)
+async function cadastrarDados(nome, cpf, fotos) {
+  // Faz o upload das fotos e recebe as URLs
+  const urlsFotos = await uploadFotos(fotos);
+
+  // Agora que temos as URLs das fotos, podemos salvar os dados no banco de dados
+  const { data, error } = await supabase
+    .from('clientes')  // A tabela onde os dados serão salvos
+    .insert([
+      {
+        nome: nome,  // Nome do cliente
+        cpf: cpf,    // CPF do cliente
+        fotos: urlsFotos  // As URLs das fotos são salvas como um array
+      }
+    ]);
+
+  // Se houver erro ao salvar, mostramos no console
+  if (error) {
+    console.error("Erro ao salvar dados:", error);
+    alert("Houve um erro ao salvar os dados.");
+  } else {
+    alert("Dados salvos com sucesso!");
+  }
+}
 
   // Loop para fazer o upload de todas as fotos selecionadas
   for (let i = 0; i < fotos.length; i++) {
