@@ -1,110 +1,82 @@
-// Supabase config
-const supabaseUrl = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // substitua pela sua chave pública
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// Conexão Supabase
+const SUPABASE_URL = 'https://cdstzbtewwbwjqhvhigy.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78';
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Verificação de código do painel
-function verificarCodigo() {
-  const codigo = document.getElementById('codigoAcesso').value;
+// Busca de fotos por nome ou CPF
+async function searchFotos() {
+  const termo = document.getElementById('searchInput').value.trim();
+  const { data, error } = await supabase
+    .from('formandos')
+    .select('*')
+    .or(`nome.ilike.%${termo}%,cpf.eq.${termo}`);
+
+  const resultDiv = document.getElementById('result');
+  resultDiv.innerHTML = '';
+
+  if (data && data.length > 0) {
+    data.forEach(formando => {
+      const container = document.createElement('div');
+      container.innerHTML = `
+        <h3>${formando.nome} - ${formando.cpf}</h3>
+        <div class="galeria">
+          ${formando.fotos.map(url => `<img src="${url}" class="foto">`).join('')}
+        </div>
+        <button onclick="exibirFormularioCompra('${formando.id}', 'digital')">Adquirir Álbum Digital (R$250)</button>
+        <button onclick="exibirFormularioCompra('${formando.id}', 'fisico')">Adquirir Álbum Físico (R$330)</button>
+        <button onclick="exibirFormularioCompra('${formando.id}', 'ambos')">Adquirir Ambos (R$470)</button>
+      `;
+      resultDiv.appendChild(container);
+    });
+  } else {
+    resultDiv.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+  }
+}
+
+// Exibe formulário de dados para compra
+function exibirFormularioCompra(idFormando, tipoAlbum) {
+  const formDiv = document.getElementById('compraForm');
+  formDiv.innerHTML = `
+    <h3>Preencha seus dados</h3>
+    <input type="text" id="nomeCliente" placeholder="Seu nome">
+    <input type="text" id="emailCliente" placeholder="Seu e-mail">
+    <input type="text" id="enderecoCliente" placeholder="Endereço de entrega">
+    <button onclick="salvarCompra('${idFormando}', '${tipoAlbum}')">Finalizar Pedido</button>
+  `;
+  formDiv.style.display = 'block';
+}
+
+// Salva compra no Supabase
+async function salvarCompra(idFormando, tipoAlbum) {
+  const nome = document.getElementById('nomeCliente').value.trim();
+  const email = document.getElementById('emailCliente').value.trim();
+  const endereco = document.getElementById('enderecoCliente').value.trim();
+
+  const valores = {
+    digital: 250,
+    fisico: 330,
+    ambos: 470
+  };
+
+  const { data, error } = await supabase
+    .from('compras')
+    .insert([{ nome, email, endereco, tipo_album: tipoAlbum, valor: valores[tipoAlbum], formando_id: idFormando }]);
+
+  if (!error) {
+    alert('Compra registrada! Você só será cobrado após o recebimento do álbum.');
+    document.getElementById('compraForm').style.display = 'none';
+  } else {
+    alert('Erro ao registrar a compra.');
+    console.error(error);
+  }
+}
+
+// Acesso ao painel com código 1811
+function acessarPainel() {
+  const codigo = prompt('Digite o código de acesso:');
   if (codigo === '1811') {
-    document.getElementById('loginPainel').style.display = 'none';
-    document.getElementById('areaCadastro').style.display = 'block';
-    carregarCadastros();
+    window.location.href = 'admin.html';
   } else {
     alert('Código incorreto!');
   }
-}
-
-// Cadastro de fotos
-document.getElementById('formCadastro')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const nome = document.getElementById('nome').value;
-  const cpf = document.getElementById('cpf').value;
-  const fotos = document.getElementById('fotos').files;
-
-  const urls = [];
-  for (const file of fotos) {
-    const filePath = `${cpf}/${file.name}`;
-    const { data, error } = await supabase.storage.from('fotos').upload(filePath, file);
-    if (!error) {
-      const { data: urlData } = supabase.storage.from('fotos').getPublicUrl(filePath);
-      urls.push(urlData.publicUrl);
-    }
-  }
-
-  const { error: insertError } = await supabase.from('formandos').insert([{ nome, cpf, fotos: urls }]);
-  if (insertError) {
-    alert('Erro ao salvar cadastro.');
-  } else {
-    alert('Cadastro realizado!');
-    document.getElementById('formCadastro').reset();
-    carregarCadastros();
-  }
-});
-
-// Carregar registros no painel
-async function carregarCadastros() {
-  const container = document.getElementById('listaCadastros');
-  if (!container) return;
-  container.innerHTML = '';
-  const { data, error } = await supabase.from('formandos').select('*');
-  if (data) {
-    data.forEach((item) => {
-      const div = document.createElement('div');
-      div.innerHTML = `<strong>${item.nome}</strong> - CPF: ${item.cpf} - Fotos: ${item.fotos.length}`;
-      container.appendChild(div);
-    });
-  }
-}
-
-// Busca na página inicial
-document.getElementById('formBusca')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const termo = document.getElementById('busca').value.trim().toLowerCase();
-  const { data } = await supabase.from('formandos').select('*');
-  const resultados = data.filter(f => f.nome.toLowerCase().includes(termo) || f.cpf.includes(termo));
-
-  const container = document.getElementById('resultadoBusca');
-  container.innerHTML = '';
-
-  if (resultados.length === 0) {
-    container.innerHTML = '<p>Nenhum resultado encontrado.</p>';
-    return;
-  }
-
-  resultados.forEach(formando => {
-    const div = document.createElement('div');
-    div.innerHTML = `<h3>${formando.nome} - CPF: ${formando.cpf}</h3>`;
-    
-    formando.fotos.forEach((url, i) => {
-      const img = document.createElement('img');
-      img.src = url;
-      img.alt = `Foto ${i + 1}`;
-      img.style.maxWidth = '150px';
-      div.appendChild(img);
-    });
-
-    const btns = document.createElement('div');
-    btns.innerHTML = `
-      <button onclick="iniciarCompra('${formando.nome}', '${formando.cpf}', 'Digital', 250)">Adquirir álbum digital - R$250</button>
-      <button onclick="iniciarCompra('${formando.nome}', '${formando.cpf}', 'Físico', 330)">Adquirir álbum físico - R$330</button>
-      <button onclick="iniciarCompra('${formando.nome}', '${formando.cpf}', 'Ambos', 470)">Adquirir ambos - R$470</button>
-    `;
-    div.appendChild(btns);
-    container.appendChild(div);
-  });
-});
-
-// Início da compra
-function iniciarCompra(nome, cpf, tipo, valor) {
-  const dados = prompt(`Preencha seus dados para concluir a compra de álbum ${tipo} (R$${valor})\n\nDigite nome completo e endereço:`);
-  if (dados) {
-    registrarCompra(nome, cpf, tipo, valor, dados);
-    alert('Dados recebidos! O pagamento será feito após o envio do álbum.');
-  }
-}
-
-// Registro da compra no Supabase
-async function registrarCompra(nome, cpf, tipo, valor, dadosContato) {
-  await supabase.from('compras').insert([{ nome, cpf, tipo, valor, dados: dadosContato }]);
 }
