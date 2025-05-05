@@ -1,93 +1,83 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel Administrativo</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #fff; color: #000; }
+    #adminSection { display: none; }
+  </style>
 </head>
 <body>
-    <h2>Painel Administrativo</h2>
-    <a href="index.html">Voltar para a página inicial</a>
-    <form id="cadastro-form">
-        <input type="text" id="nome" placeholder="Nome" required>
-        <input type="text" id="cpf" placeholder="CPF" required>
-        <input type="file" id="foto" accept="image/*" required multiple>
-        <button type="submit">Cadastrar</button>
-    </form>
+  <h1>Painel Administrativo</h1>
+  <div id="loginSection">
+    <input id="accessCode" type="password" placeholder="Código administrativo" />
+    <button id="loginBtn">Entrar</button>
+  </div>
+  <div id="adminSection">
+    <h2>Cadastrar Formando</h2>
+    Nome: <input id="nomeInput" type="text"><br>
+    CPF: <input id="cpfInput" type="text"><br>
+    Fotos: <input id="photosInput" type="file" multiple accept="image/*"><br>
+    <button id="submitBtn">Salvar Formando</button>
+    <h2>Formandos Cadastrados</h2>
+    <div id="registeredList"></div>
+  </div>
 
-    <h3>Lista de Registros</h3>
-    <ul id="lista-registros"></ul>
+  <script>
+    const supabase = supabase.createClient(
+      'https://cdstzbtewwbwjqhvhigy.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78'
+    );
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script>
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';  // https://cdstzbtewwbwjqhvhigy.supabase.co
-        const SUPABASE_KEY = 'YOUR_SUPABASE_KEY';  // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78 seu Supabase aqui
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    document.getElementById("loginBtn").onclick = () => {
+      const code = document.getElementById("accessCode").value.trim();
+      if (code === "1811") {
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("adminSection").style.display = "block";
+        carregarFormandos();
+      } else {
+        alert("Código incorreto!");
+      }
+    };
 
-        // Verifica se o usuário está logado
-        if (localStorage.getItem('isLoggedIn') !== 'true') {
-            window.location.href = 'login.html'; // Redireciona para o login caso não esteja logado
-        }
+    async function carregarFormandos() {
+      const { data, error } = await supabase.from("formandos").select("nome, cpf, fotos");
+      const list = document.getElementById("registeredList");
+      list.innerHTML = "";
+      data?.forEach((p) => {
+        const div = document.createElement("div");
+        div.innerHTML = `<strong>${p.nome}</strong> - CPF: ${p.cpf} - Fotos: ${p.fotos.length}`;
+        list.appendChild(div);
+      });
+    }
 
-        // Função para cadastrar dados
-        document.getElementById('cadastro-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
+    document.getElementById("submitBtn").onclick = async () => {
+      const nome = document.getElementById("nomeInput").value.trim();
+      const cpf = document.getElementById("cpfInput").value.trim();
+      const files = document.getElementById("photosInput").files;
+      if (!nome || !cpf || files.length === 0) return alert("Preencha todos os campos!");
 
-            const nome = document.getElementById('nome').value;
-            const cpf = document.getElementById('cpf').value;
-            const fotos = document.getElementById('foto').files;
+      const urls = [];
+      for (const file of files) {
+        const path = `formandos/${cpf}_${Date.now()}_${file.name}`;
+        const { error: uploadError } = await supabase.storage.from("fotos").upload(path, file);
+        if (uploadError) return alert("Erro ao enviar fotos.");
+        const { data } = supabase.storage.from("fotos").getPublicUrl(path);
+        urls.push(data.publicUrl);
+      }
 
-            // Faz upload das fotos para o Supabase
-            let fotosUrls = [];
-            for (const foto of fotos) {
-                const { data, error } = await supabase.storage
-                    .from('fotos')
-                    .upload('fotos/' + Date.now() + foto.name, foto);
-                if (data) {
-                    const url = supabase.storage.from('fotos').getPublicUrl(data.path).publicURL;
-                    fotosUrls.push(url);
-                } else {
-                    console.error('Erro no upload da foto:', error.message);
-                    alert('Erro no upload da foto!');
-                    return;
-                }
-            }
-
-            // Salva os dados no Supabase
-            const { data, error } = await supabase.from('clientes').insert([
-                {
-                    nome: nome,
-                    cpf: cpf,
-                    fotos: fotosUrls,
-                },
-            ]);
-
-            if (data) {
-                alert('Cadastro realizado com sucesso!');
-                loadLista();  // Recarrega a lista de registros após o cadastro
-            } else {
-                alert('Erro ao cadastrar: ' + error.message);
-            }
-        });
-
-        // Função para carregar a lista de registros
-        async function loadLista() {
-            const { data, error } = await supabase.from('clientes').select();
-            const lista = document.getElementById('lista-registros');
-            lista.innerHTML = '';
-            if (error) {
-                console.error('Erro ao carregar registros:', error.message);
-                return;
-            }
-
-            data.forEach(cliente => {
-                const li = document.createElement('li');
-                li.textContent = `${cliente.nome} - ${cliente.cpf}`;
-                lista.appendChild(li);
-            });
-        }
-
-        loadLista();
-    </script>
+      const { error } = await supabase.from("formandos").insert({ nome, cpf, fotos: urls });
+      if (error) return alert("Erro ao salvar dados.");
+      alert("Formando cadastrado!");
+      document.getElementById("nomeInput").value = "";
+      document.getElementById("cpfInput").value = "";
+      document.getElementById("photosInput").value = "";
+      carregarFormandos();
+    };
+  </script>
 </body>
 </html>
