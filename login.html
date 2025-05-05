@@ -1,27 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Login - Painel Admin</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Acesso ao Painel</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="login-container">
-    <h2>Digite o código de acesso</h2>
-    <input type="password" id="codigoAcesso" placeholder="Código de 4 dígitos">
-    <button onclick="verificarCodigo()">Acessar Painel</button>
-    <p id="mensagemErro" style="color:red;"></p>
+  <div class="container">
+    <h2>Entrar no Painel Administrativo</h2>
+    <input type="text" id="accessCode" placeholder="Digite o código de acesso" />
+    <button onclick="login()">Acessar</button>
+    <a href="index.html">Voltar à Página Inicial</a>
   </div>
 
-  <script>
-    function verificarCodigo() {
-      const codigo = document.getElementById('codigoAcesso').value;
-      if (codigo === "1811") {
-        window.location.href = "admin.html";
-      } else {
-        document.getElementById('mensagemErro').textContent = "Código incorreto. Tente novamente.";
-      }
-    }
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
