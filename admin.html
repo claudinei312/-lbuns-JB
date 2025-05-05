@@ -1,83 +1,22 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Painel Administrativo</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: sans-serif; padding: 20px; background: #fff; color: #000; }
-    #adminSection { display: none; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Painel Administrativo</h1>
-  <div id="loginSection">
-    <input id="accessCode" type="password" placeholder="Código administrativo" />
-    <button id="loginBtn">Entrar</button>
-  </div>
-  <div id="adminSection">
-    <h2>Cadastrar Formando</h2>
-    Nome: <input id="nomeInput" type="text"><br>
-    CPF: <input id="cpfInput" type="text"><br>
-    Fotos: <input id="photosInput" type="file" multiple accept="image/*"><br>
-    <button id="submitBtn">Salvar Formando</button>
-    <h2>Formandos Cadastrados</h2>
-    <div id="registeredList"></div>
-  </div>
+  <form id="uploadForm">
+    <input type="text" id="nome" placeholder="Nome completo" required />
+    <input type="text" id="cpf" placeholder="CPF" required />
+    <input type="file" id="fotos" multiple accept="image/*" required />
+    <button type="submit">Cadastrar</button>
+  </form>
+  <button onclick="window.location.href='index.html'">Voltar à Página Inicial</button>
 
-  <script>
-    const supabase = supabase.createClient(
-      'https://cdstzbtewwbwjqhvhigy.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78'
-    );
+  <div id="listaFormandos"></div>
 
-    document.getElementById("loginBtn").onclick = () => {
-      const code = document.getElementById("accessCode").value.trim();
-      if (code === "1811") {
-        document.getElementById("loginSection").style.display = "none";
-        document.getElementById("adminSection").style.display = "block";
-        carregarFormandos();
-      } else {
-        alert("Código incorreto!");
-      }
-    };
-
-    async function carregarFormandos() {
-      const { data, error } = await supabase.from("formandos").select("nome, cpf, fotos");
-      const list = document.getElementById("registeredList");
-      list.innerHTML = "";
-      data?.forEach((p) => {
-        const div = document.createElement("div");
-        div.innerHTML = `<strong>${p.nome}</strong> - CPF: ${p.cpf} - Fotos: ${p.fotos.length}`;
-        list.appendChild(div);
-      });
-    }
-
-    document.getElementById("submitBtn").onclick = async () => {
-      const nome = document.getElementById("nomeInput").value.trim();
-      const cpf = document.getElementById("cpfInput").value.trim();
-      const files = document.getElementById("photosInput").files;
-      if (!nome || !cpf || files.length === 0) return alert("Preencha todos os campos!");
-
-      const urls = [];
-      for (const file of files) {
-        const path = `formandos/${cpf}_${Date.now()}_${file.name}`;
-        const { error: uploadError } = await supabase.storage.from("fotos").upload(path, file);
-        if (uploadError) return alert("Erro ao enviar fotos.");
-        const { data } = supabase.storage.from("fotos").getPublicUrl(path);
-        urls.push(data.publicUrl);
-      }
-
-      const { error } = await supabase.from("formandos").insert({ nome, cpf, fotos: urls });
-      if (error) return alert("Erro ao salvar dados.");
-      alert("Formando cadastrado!");
-      document.getElementById("nomeInput").value = "";
-      document.getElementById("cpfInput").value = "";
-      document.getElementById("photosInput").value = "";
-      carregarFormandos();
-    };
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
