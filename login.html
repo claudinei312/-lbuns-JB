@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Acesso ao Painel</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Login do Administrador</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h2>Entrar no Painel Administrativo</h2>
-    <input type="text" id="accessCode" placeholder="Digite o código de acesso" />
+    <h2>Acesso Administrativo</h2>
+    <input type="password" id="accessCode" placeholder="Digite o código de acesso" />
     <button onclick="login()">Acessar</button>
-    <a href="index.html">Voltar à Página Inicial</a>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="script.js"></script>
+  <script>
+    function login() {
+      const code = document.getElementById('accessCode').value;
+      if (code === '1811') {
+        window.location.href = 'admin.html';
+      } else {
+        alert('Código incorreto!');
+      }
+    }
+  </script>
 </body>
 </html>
