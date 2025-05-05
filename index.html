@@ -1,52 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JB Formatura</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: sans-serif; padding: 20px; background: #fff; color: #000; }
-    img { max-width: 100px; margin: 5px; }
-  </style>
+  <meta charset="UTF-8">
+  <title>Visualizar Fotos</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>JB Formatura</h1>
-  <input id="searchInput" type="text" placeholder="Buscar por nome ou CPF" />
-  <button id="searchBtn">Buscar</button>
-  <a href="admin.html">Painel Administrativo</a>
-  <div id="results"></div>
+  <input type="text" id="searchInput" placeholder="Buscar por nome ou CPF" />
+  <button onclick="buscarFormando()">Buscar</button>
+  <button onclick="window.location.href='login.html'">Área Administrativa</button>
+  <div id="resultadoBusca"></div>
 
-  <script>
-    const supabase = supabase.createClient(
-      'https://cdstzbtewwbwjqhvhigy.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78'
-    );
-
-    document.getElementById("searchBtn").onclick = async () => {
-      const query = document.getElementById("searchInput").value.trim();
-      if (!query) return;
-
-      const { data: formandos, error } = await supabase
-        .from("formandos")
-        .select("nome, cpf, fotos")
-        .or(`nome.ilike.%${query}%,cpf.eq.${query}`);
-
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "";
-
-      formandos?.forEach((p) => {
-        const div = document.createElement("div");
-        div.innerHTML = `<strong>${p.nome}</strong> - CPF: ${p.cpf}`;
-        (p.fotos || []).forEach((url) => {
-          const img = document.createElement("img");
-          img.src = url;
-          div.appendChild(img);
-        });
-        resultsDiv.appendChild(div);
-      });
-    };
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
