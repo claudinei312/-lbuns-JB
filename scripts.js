@@ -20,12 +20,37 @@ async function buscar() {
   const resultadoDiv = document.getElementById('resultado');
   resultadoDiv.innerHTML = 'Carregando...';
 
-  const subpastas = await listSubfolders();
-  const pastaEncontrada = subpastas.find(p => p.name.toLowerCase().includes(termo));
+  try {
+    const subpastas = await listSubfolders();
+    const pastaEncontrada = subpastas.find(p => p.name.toLowerCase().includes(termo));
 
-  if (!pastaEncontrada) {
-    resultadoDiv.innerHTML = 'Nenhuma pasta encontrada.';
-    return;
+    if (!pastaEncontrada) {
+      resultadoDiv.innerHTML = 'Nenhuma pasta encontrada.';
+      return;
+    }
+
+    const imagens = await listImagesInFolder(pastaEncontrada.id);
+
+    if (imagens.length === 0) {
+      resultadoDiv.innerHTML = 'Nenhuma imagem encontrada.';
+      return;
+    }
+
+    resultadoDiv.innerHTML = `<h3>${pastaEncontrada.name}</h3>`;
+    imagens.forEach(img => {
+      const imgUrl = `https://drive.google.com/uc?id=${img.id}`;
+      const imgElement = document.createElement('img');
+      imgElement.src = imgUrl;
+      imgElement.alt = img.name;
+      imgElement.style = 'max-width:200px;margin:10px;';
+      resultadoDiv.appendChild(imgElement);
+    });
+  } catch (erro) {
+    console.error('Erro ao buscar fotos:', erro);
+    resultadoDiv.innerHTML = 'Erro ao buscar fotos. Verifique o console para detalhes.';
+  }
+}
+
   }
 
   const imagens = await listImagesInFolder(pastaEncontrada.id);
