@@ -1,53 +1,60 @@
-// Inicializa o Supabase
-const _supabase = supabase.createClient(
-  "https://cdstzbtewwbwjqhvhigy.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkc3R6YnRld3did2pxaHZoaWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyOTk1MzMsImV4cCI6MjA2MTg3NTUzM30.CSUSb1NFFjf2MYLjPjiOS-RZdvavTxeqr_-T74Lum78"
-);
+const apiKey = "AIzaSyC-HpYzj3rGLgOB6ZFQSS_ahHQLA9hc5CU";
+const folderId = "1zPo1pHzN1yivlv15qcy0kmBql05gKp3y";
 
-// Cadastro de novo formando
-async function cadastrarFormando() {
-  const nome = document.getElementById("nome").value.trim();
-  const cpf = document.getElementById("cpf").value.trim();
-  const fotos = document.getElementById("fotos").files;
-
-  if (!nome || !cpf || fotos.length === 0) {
-    alert("Preencha todos os campos e selecione pelo menos uma foto.");
-    return;
+document.getElementById("searchInput").addEventListener("input", function () {
+  const searchValue = this.value.toLowerCase();
+  if (searchValue.length >= 3) {
+    listFolderContents(folderId, searchValue);
+  } else {
+    document.getElementById("gallery").innerHTML = "";
   }
+});
 
-  const fotosUrls = [];
+function listFolderContents(folderId, searchTerm) {
+  const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'&key=${apiKey}`;
 
-  for (const file of fotos) {
-    const fileName = `${cpf}_${Date.now()}_${file.name}`;
-    const { data: uploadData, error: uploadError } = await _supabase.storage.from('fotos').upload(fileName, file);
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      const folders = data.files;
+      const matchedFolder = folders.find((folder) =>
+        folder.name.toLowerCase().includes(searchTerm)
+      );
 
-    if (uploadError) {
-      console.error("Erro ao enviar foto:", uploadError);
-      alert("Erro ao enviar foto.");
-      return;
-    }
+      if (matchedFolder) {
+        fetchImagesFromFolder(matchedFolder.id);
+      } else {
+        document.getElementById("gallery").innerHTML = "<p>Nenhuma pasta encontrada.</p>";
+      }
+    })
+    .catch((error) => {
+      console.error("Erro ao listar pastas:", error);
+    });
+}
 
-    const { data: urlData } = _supabase.storage.from('fotos').getPublicUrl(fileName);
-    if (!urlData || !urlData.publicUrl) {
-      console.error("Erro ao gerar URL pública:", urlData);
-      alert("Erro ao gerar URL da foto.");
-      return;
-    }
+function fetchImagesFromFolder(folderId) {
+  const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+(mimeType='image/jpeg'+or+mimeType='image/png')&fields=files(id,name)&key=${apiKey}`;
 
-    fotosUrls.push(urlData.publicUrl);
-  }
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      const images = data.files;
+      const gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
 
-  console.log("URLs das fotos:", fotosUrls);
+      if (images.length === 0) {
+        gallery.innerHTML = "<p>Nenhuma imagem encontrada.</p>";
+        return;
+      }
 
-  const { error: insertError } = await _supabase.from('formandos').insert([{ nome, cpf, fotos: fotosUrls }]);
-
-  if (insertError) {
-    console.error("Erro ao salvar no banco:", insertError);
-    alert("Erro ao salvar dados no banco.");
-    return;
-  }
-
-  alert("Cadastro realizado com sucesso!");
-  document.getElementById("formCadastro").reset();
-  listarFormandos(); // Atualiza a lista abaixo do formulário, se aplicável
+      images.forEach((image) => {
+        const imgElement = document.createElement("img");
+        imgElement.src = `https://drive.google.com/uc?export=view&id=${image.id}`;
+        imgElement.alt = image.name;
+        gallery.appendChild(imgElement);
+      });
+    })
+    .catch((error) => {
+      console.error("Erro ao carregar imagens:", error);
+    });
 }
