@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Visualizar Fotos</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Busca de Fotos</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>JB Formatura</h1>
-  <input type="text" id="searchInput" placeholder="Buscar por nome ou CPF" />
-  <button onclick="buscarFormando()">Buscar</button>
-  <button onclick="window.location.href='login.html'">Área Administrativa</button>
-  <div id="resultadoBusca"></div>
-
-  <script src="script.js"></script>
+  <div class="container">
+    <h1>JB Formatura</h1>
+    <input type="text" id="searchInput" placeholder="Digite o nome para buscar" />
+    <div id="gallery"></div>
+  </div>
+  <script src="script.js" defer></script>
 </body>
 </html>
