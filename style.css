@@ -1,41 +1,46 @@
 body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f8f8;
   color: #333;
 }
 
-h1, h2 {
+.container {
+  max-width: 800px;
+  margin: 40px auto;
   text-align: center;
+  padding: 20px;
 }
 
-input, button {
-  display: block;
-  margin: 10px auto;
+h1 {
+  margin-bottom: 20px;
+}
+
+#searchInput {
   padding: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 30px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
   font-size: 16px;
 }
 
-.container {
-  max-width: 400px;
-  margin: 50px auto;
-  background: white;
-  padding: 20px;
+#gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+#gallery img {
+  width: 200px;
+  height: auto;
   border-radius: 8px;
-  box-shadow: 0 0 10px #ccc;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease-in-out;
 }
 
-.card {
-  background: white;
-  padding: 10px;
-  margin: 10px auto;
-  border-radius: 6px;
-  box-shadow: 0 0 5px #aaa;
-  max-width: 600px;
-}
-
-img.thumb {
-  width: 100px;
-  margin: 5px;
-  border-radius: 4px;
+#gallery img:hover {
+  transform: scale(1.05);
 }
