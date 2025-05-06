@@ -1,17 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Busca de Fotos</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Localizar Álbuns</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>JB Formatura</h1>
-    <input type="text" id="searchInput" placeholder="Digite o nome para buscar" />
-    <div id="gallery"></div>
-  </div>
-  <script src="script.js" defer></script>
+    <header>
+        <h1>Localizar Álbuns</h1>
+    </header>
+    
+    <main>
+        <section class="search-section">
+            <h2>Pesquisa por Nome</h2>
+            <!-- Campo de busca -->
+            <input type="text" id="search-input" placeholder="Digite o nome para buscar">
+            <button onclick="searchAlbum()">Pesquisar</button>
+        </section>
+
+        <section id="albums-container">
+            <!-- Resultados da pesquisa aparecerão aqui -->
+        </section>
+    </main>
+
+    <script src="script.js"></script>
 </body>
 </html>
